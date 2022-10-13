@@ -4,6 +4,7 @@ import 'package:master_app/Provider/homeProvider.dart';
 import 'package:provider/provider.dart';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:timezone/data/latest.dart' as tz;
 
 import 'Preferencias/sharedPeference.dart';
 import 'Provider/navProvider.dart';
@@ -12,6 +13,7 @@ import 'navegationPage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  tz.initializeTimeZones();
   await NotificationService().setup();
   final prefs = PreferenciasUsuario();
   await prefs.initPrefs();
