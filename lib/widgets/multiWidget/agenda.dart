@@ -28,8 +28,8 @@ class _AgendaState extends State<Agenda> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10.0)),
                   tileColor: Colors.grey[200],
-                  leading:
-                      Text("$hours ${agendaPro.agenda[hours]["dateTime"]}"),
+                  leading: Text(
+                      "${agendaPro.agenda[hours]["hora"]}:${agendaPro.agenda[hours]["min"]} ${agendaPro.agenda[hours]["dateTime"]}"),
                   title: Text(agendaPro.agenda[hours]["concepto"]),
                   trailing: Icon(
                     Icons.schedule_rounded,

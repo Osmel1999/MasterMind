@@ -22,9 +22,7 @@ class NotificationService {
     await localNotification.initialize(initSetttings);
   }
 
-  void onSelectNotification(String payload) {
-    print(payload);
-  }
+  void onSelectNotification(String payload) {}
 
   void onDidReceiveLocalNotification(
       int id, String? title, String? body, String? payload) async {
@@ -59,11 +57,6 @@ class NotificationService {
 
   Future<void> scheduleNotification(String tipoActivity, String descripcion,
       DateTime scheduledNDateTime, int idChannel) async {
-    // DateTime scheduledNDateTime = fechaAsignacion;
-    // Podemos tomar el numero de dias y asignarse los al [Date.now()]
-    // para asignar la notificacion a dias en el futuro.
-    // var fiftyDaysFromNow = today.add(new Duration(days: 50));
-    print(scheduledNDateTime);
     AndroidNotificationDetails androidNotificationDetails =
         const AndroidNotificationDetails('second id', 'second channel ',
             channelDescription: 'second description',
@@ -89,9 +82,6 @@ class NotificationService {
         androidAllowWhileIdle: true,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime);
-
-    print(
-        '@@@@@ NOTIFICACION ESPECIFICA CREADA, [FECHA]:  $scheduledNDateTime  @@@@@@');
   }
 
   Future<void> showDailyAtTime(List<String> nombreApellido, int hora, int min,
@@ -129,9 +119,6 @@ class NotificationService {
         androidAllowWhileIdle: true,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime);
-
-    print(
-        '@@@@@ NOTIFICACION CREADA DIARIA, [HORA]: ${time.hour} [CHANNEL] : ${idChannel.toString()} @@@@@@');
   }
 
   Future<void> cancelNotification(int id) async {

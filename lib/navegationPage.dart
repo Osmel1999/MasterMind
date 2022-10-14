@@ -22,7 +22,7 @@ class _NavigationPageState extends State<NavigationPage> {
     "Inicio": HomePage(),
     "Contactos": ContactsPage(),
     "IA": StatsPage(),
-    "Multi-Media": MediaPage(),
+    "Multimedia": MediaPage(),
   };
 
   // int navIndex = 0;

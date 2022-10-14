@@ -21,7 +21,7 @@ class AgendaProvider with ChangeNotifier {
   // late DateTime dateSelected;
   String dataDay = "";
   Map<String, dynamic> dbAgenda = {};
-  Map<String, dynamic> agenda = {};
+  Map<dynamic, dynamic> agenda = {};
   DateTime? eventDateTime;
   String queryEvent = "";
   // DateTime? eventTime;
@@ -79,6 +79,7 @@ class AgendaProvider with ChangeNotifier {
                                     ? () {
                                         addDB(eventDateTime!,
                                             eNoteController.text, null);
+
                                         Navigator.of(context).pop();
                                         notificationService
                                             .scheduleNotification(
@@ -138,12 +139,11 @@ class AgendaProvider with ChangeNotifier {
                         child: CupertinoDatePicker(
                           mode: CupertinoDatePickerMode.dateAndTime,
                           onDateTimeChanged: (date) {
-                            print(date);
                             eventDateTime = date;
                           },
                           initialDateTime: DateTime.now(),
                           minimumYear: DateTime.now().year,
-                          maximumYear: 2021,
+                          maximumYear: DateTime.now().year + 1,
                         ),
                       ),
                     ],
@@ -154,16 +154,33 @@ class AgendaProvider with ChangeNotifier {
   }
 
   addDB(DateTime date, String query, String? action) {
-    dbAgenda["${date.year}-${date.month}-${date.day}"] = {
+    // agregamos la nueva data en (String)
+    Map temp = {
       ...dbAgenda["${date.year}-${date.month}-${date.day}"] ?? {},
-      int.parse("${date.hour}${date.minute}"): {
+      "${date.hour}${date.minute}": {
         "dateTime": "AM",
         "hora": "${date.hour}",
         "min": "${date.minute}",
         "concepto": query,
       }
     };
+    // Convetimos los keys de la data del dia a (int)
+    List kTemp = [];
+    temp.keys.toList().forEach((i) {
+      kTemp.add(int.parse(i));
+    });
+    // Organizamos de mayor a menos los keys del los dias
+    kTemp.sort();
+    // regresamos los keys y value ya organizados a dbAgenda
+    dbAgenda["${date.year}-${date.month}-${date.day}"] = {};
+    for (var e in kTemp) {
+      dbAgenda["${date.year}-${date.month}-${date.day}"] = {
+        ...dbAgenda["${date.year}-${date.month}-${date.day}"] ?? {},
+        "$e": temp['$e']
+      };
+    }
+    agenda = dbAgenda[dataDay] ?? {};
     notifyListeners();
-    pref.agendPref = jsonEncode(dbAgenda);
+    pref.agendPref = json.encode(dbAgenda);
   }
 }
