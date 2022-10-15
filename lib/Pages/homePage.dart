@@ -25,7 +25,11 @@ class _HomePageState extends State<HomePage> {
         // TODO: Sueńos
         SizedBox(
           height: media.height * 0.25,
-          child: const Carousel(),
+          child: Carousel(
+            height: media.height * 0.25,
+            aspectRatio: 16 / 9,
+            viewportFraction: 0.8,
+          ),
         ),
         // TODO: MultiData
         SizedBox(

@@ -82,7 +82,11 @@ class _NavigationPageState extends State<NavigationPage> {
               ),
             ),
             // TODO: BODY
-            body[body.keys.toList()[navProv.indexNav]]!,
+            SizedBox(
+              width: media.width,
+              height: media.height * 0.75,
+              child: body[body.keys.toList()[navProv.indexNav]]!,
+            ),
           ]),
         ),
       ),

@@ -1,4 +1,5 @@
 import 'package:assets_audio_player/assets_audio_player.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -19,18 +20,35 @@ class _AudioBarState extends State<AudioBar> {
     final playerProvider = Provider.of<PlayerProvider>(context);
     return Container(
       height: media.height * 0.09,
-      width: media.width * 0.95,
+      width: media.width * 0.98,
       decoration: BoxDecoration(
-        borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+        borderRadius: const BorderRadius.all(Radius.circular(10)),
         color: Colors.grey[200],
       ),
       child: Column(
         children: [
           ListTile(
-            leading: Icon(
-              Icons.multitrack_audio_rounded,
-              color: Colors.green[800],
+            leading: SizedBox(
+              height: media.height * 0.08,
+              width: media.height * 0.08,
+              child: CachedNetworkImage(
+                imageUrl:
+                    playerProvider.assetsAudioPlayer.getCurrentAudioImage!.path,
+                imageBuilder: (context, imageProvider) => Container(
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.all(Radius.circular(8)),
+                    image: DecorationImage(
+                      image: imageProvider,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                placeholder: (context, url) => const Center(
+                    child: CircularProgressIndicator(
+                  color: Colors.blueAccent,
+                )),
+                errorWidget: (context, url, error) => const Icon(Icons.error),
+              ),
             ),
             title: SizedBox(
                 width: media.width * 0.12,
@@ -64,7 +82,7 @@ class _AudioBarState extends State<AudioBar> {
                       )),
             trailing: SizedBox(
               height: media.height * 0.08,
-              width: media.width * 0.3,
+              width: media.width * 0.15,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -79,16 +97,6 @@ class _AudioBarState extends State<AudioBar> {
                         : Colors.green,
                     onPressed: () {
                       playerProvider.playOrPause();
-                      // isPLaying = (isPLaying) ? false : true;
-                      // setState(() {});
-                    },
-                  ),
-                  IconButton(
-                    iconSize: 40,
-                    icon: const Icon(Icons.arrow_circle_right_rounded),
-                    onPressed: () {
-                      playerProvider.assetsAudioPlayer
-                          .next(keepLoopMode: true /*keepLoopMode: false*/);
                     },
                   ),
                 ],
@@ -104,6 +112,7 @@ class _AudioBarState extends State<AudioBar> {
             child: playerProvider.assetsAudioPlayer.builderRealtimePlayingInfos(
                 builder: (context, infos) {
               return LinearProgressIndicator(
+                  minHeight: 5,
                   color: Colors.green,
                   backgroundColor: Colors.green.withOpacity(0.4),
                   value: infos.duration.inMilliseconds == 0
