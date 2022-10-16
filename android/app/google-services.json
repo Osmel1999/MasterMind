@@ -1,0 +1,63 @@
+{
+  "project_info": {
+    "project_number": "564424833742",
+    "firebase_url": "https://sen-assistant-default-rtdb.firebaseio.com",
+    "project_id": "sen-assistant",
+    "storage_bucket": "sen-assistant.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:564424833742:android:783a155ba932041901ae9f",
+        "android_client_info": {
+          "package_name": "com.teserakt.Master_mind"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "564424833742-tlu9btp0k89uoqngnlrs8a8lg8sjq4f4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.teserakt.Master_mind",
+            "certificate_hash": "acf837acd3c08facf87e73a8689fb0b41cddbcdb"
+          }
+        },
+        {
+          "client_id": "564424833742-v7bh0evg2356g3f0rac8uu1achfkued1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.teserakt.Master_mind",
+            "certificate_hash": "95965946e4f208f2f30d87e63b7594255ff98d3e"
+          }
+        },
+        {
+          "client_id": "564424833742-vg79h2ntqil69ouhd2qfkmurvj1c1e08.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCM0p6SvpMK8V6tjr5OjbXFli-tADyZtjw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "564424833742-vg79h2ntqil69ouhd2qfkmurvj1c1e08.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "564424833742-be7o9mci863682b57scpn9d9vuef1lqf.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.teserakt.Master-mind"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
