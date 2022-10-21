@@ -1,6 +1,6 @@
 import UIKit
 import Flutter
-import FirebaseCore
+// import FirebaseCore
 
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {
@@ -12,7 +12,7 @@ import FirebaseCore
       UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterDelegate
     }
     GeneratedPluginRegistrant.register(with: self)   
-    FirebaseApp.configure() 
+    // FirebaseApp.configure() 
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 }
