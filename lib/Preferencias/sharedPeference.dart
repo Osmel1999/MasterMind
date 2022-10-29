@@ -43,4 +43,13 @@ class PreferenciasUsuario {
   set agendPref(String value) {
     _prefs.setString('agendPref', value);
   }
+
+  // dataBase of the user
+  String get bigData {
+    return _prefs.getString('bigData') ?? '';
+  }
+
+  set bigData(String value) {
+    _prefs.setString('bigData', value);
+  }
 }
