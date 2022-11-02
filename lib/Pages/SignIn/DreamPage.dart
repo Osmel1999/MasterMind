@@ -1,6 +1,7 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../Provider/bigData.dart';
@@ -20,7 +21,6 @@ class _DreamsState extends State<Dreams> {
   Widget build(BuildContext context) {
     final dreamProvider = Provider.of<DreamProvider>(context);
     final bigData = Provider.of<BigData>(context);
-
     var media = MediaQuery.of(context).size;
     return Material(
       child: Stack(
@@ -71,10 +71,9 @@ class _DreamsState extends State<Dreams> {
                                 errorWidget: (context, url, error) =>
                                     const Icon(Icons.error),
                               ),
-                              ((bigData.bigData["db_sueños"] != null) &&
-                                      (bigData.bigData["db_sueños"][
-                                              dreamProvider
-                                                  .listSuggest[index]] !=
+                              ((bigData.bigData["Sueños"] != null) &&
+                                      (bigData.bigData["Sueños"][dreamProvider
+                                              .listSuggest[index]] !=
                                           null))
                                   ? Center(
                                       child: ZoomIn(
@@ -105,21 +104,29 @@ class _DreamsState extends State<Dreams> {
               ],
             ),
           ),
-          (bigData.bigData["db_sueños"] != null &&
-                  bigData.bigData["db_sueños"].isNotEmpty)
+          (bigData.bigData["Sueños"] != null &&
+                  bigData.bigData["Sueños"].isNotEmpty)
               ? Positioned(
                   bottom: 10,
-                  right: 17,
-                  child: ElevatedButton(
-                    child: const Text("Siguiente"),
-                    onPressed: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (BuildContext context) => MetasPage(),
+                  // right: 17,
+                  child: SizedBox(
+                    width: media.width,
+                    child: Center(
+                      child: SizedBox(
+                        width: media.width * 0.8,
+                        child: ElevatedButton(
+                          child: const Text("Siguiente"),
+                          onPressed: () {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (BuildContext context) => MetasPage(),
+                              ),
+                            );
+                          },
                         ),
-                      );
-                    },
+                      ),
+                    ),
                   ),
                 )
               : Container(),

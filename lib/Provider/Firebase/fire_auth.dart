@@ -9,15 +9,16 @@ import 'fire_store.dart';
 class FireAuth with ChangeNotifier {
   GoogleSignInAccount? currentUser;
   String email = '';
+  String displayName = '';
   late UserCredential credential;
-  late GoogleSignIn _googleSignIn;
+  late GoogleSignIn googleSignIn;
 
   FireAuth() {
     _googleInit();
   }
 
   _googleInit() {
-    _googleSignIn = GoogleSignIn(
+    googleSignIn = GoogleSignIn(
       scopes: <String>[
         'email',
         // 'https://www.googleapis.com/auth/analytics.readonly',
@@ -34,7 +35,12 @@ class FireAuth with ChangeNotifier {
     //     notifyListeners();
     //   }
     // });
-    _googleSignIn.signInSilently();
+    googleSignIn.signInSilently();
+    notifyListeners();
+  }
+
+  Future<void> autoAuth() async {
+    currentUser = await googleSignIn.signInSilently();
     notifyListeners();
   }
 
@@ -58,8 +64,9 @@ class FireAuth with ChangeNotifier {
 
   Future<void> handleSignIn(BuildContext context) async {
     try {
-      currentUser = await _googleSignIn.signIn();
+      currentUser = await googleSignIn.signIn();
       email = currentUser!.email;
+      displayName = currentUser!.displayName!;
       print("EMAIL:::-> $email");
       credential = await signInWithGoogle(currentUser);
       print(credential.user!.uid);
@@ -69,5 +76,5 @@ class FireAuth with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> handleSignOut() => _googleSignIn.disconnect();
+  Future<void> handleSignOut() => googleSignIn.disconnect();
 }

@@ -183,4 +183,111 @@ class AgendaProvider with ChangeNotifier {
     notifyListeners();
     pref.agendPref = json.encode(dbAgenda);
   }
+
+  void addCompromiso(BuildContext context, Size media) {
+    TextEditingController eNoteController = TextEditingController();
+    showCupertinoModalPopup(
+        context: context,
+        builder: (BuildContext builder) {
+          return Material(
+            child: StatefulBuilder(builder: (context, setState) {
+              return Container(
+                  height: media.height * 0.5,
+                  width: media.width,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text("Agendar evento",
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                )),
+                            TextButton(
+                                onPressed: (eNoteController.text.isNotEmpty)
+                                    ? () {
+                                        addDB(eventDateTime!,
+                                            eNoteController.text, null);
+
+                                        Navigator.of(context).pop();
+                                        notificationService
+                                            .scheduleNotification(
+                                                'Agenda',
+                                                eNoteController.text,
+                                                eventDateTime!,
+                                                1);
+                                      }
+                                    : null,
+                                child: Text(
+                                  "Listo",
+                                  style: TextStyle(
+                                      color: (eNoteController.text.isNotEmpty)
+                                          ? Colors.blueAccent
+                                          : Colors.grey[400]),
+                                )),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        height: media.height * 0.05,
+                        width: media.width * 0.8,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[300],
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(10.0)),
+                        ),
+                        child: TextFormField(
+                          cursorWidth: 2,
+                          cursorHeight: 20,
+                          textCapitalization: TextCapitalization.sentences,
+                          decoration: const InputDecoration(
+                            border: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            errorBorder: InputBorder.none,
+                            disabledBorder: InputBorder.none,
+                            contentPadding:
+                                EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                            fillColor: Colors.white54,
+                            // labelText: 'Buscar contacto',
+                            labelStyle: TextStyle(fontFamily: 'Ubuntu'),
+                            prefixIcon: Icon(
+                              Icons.event_note_rounded,
+                              color: Colors.blueAccent,
+                              size: 20.0,
+                            ),
+                          ),
+                          controller: eNoteController,
+                          onChanged: (query) => setState(() {}),
+                        ),
+                      ),
+                      Container(
+                        height: media.height * 0.3,
+                        width: media.width * 0.9,
+                        color: Colors.white,
+                        child: CupertinoDatePicker(
+                          mode: CupertinoDatePickerMode.dateAndTime,
+                          onDateTimeChanged: (date) {
+                            eventDateTime = date;
+                          },
+                          initialDateTime: DateTime.now(),
+                          minimumYear: DateTime.now().year,
+                          maximumYear: DateTime.now().year + 1,
+                        ),
+                      ),
+                    ],
+                  ));
+            }),
+          );
+        });
+  }
 }

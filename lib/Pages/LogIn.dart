@@ -17,6 +17,15 @@ class SignInDemo extends StatefulWidget {
 }
 
 class SignInDemoState extends State<SignInDemo> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // BigData().autoAuth();
+    });
+  }
+
   Widget _buildBody(Size media) {
     final fireAuth = Provider.of<FireAuth>(context);
     final bigData = Provider.of<BigData>(context);
@@ -61,12 +70,13 @@ class SignInDemoState extends State<SignInDemo> {
             child: ElevatedButton(
               onPressed: () async {
                 await fireAuth.handleSignIn(context);
+                bigData.bigData["User"]["Email"] = fireAuth.email;
+                bigData.bigData["User"]["Name"] = fireAuth.displayName;
                 if ((await fireStore.bajarDataCloud(
-                        "mj@mail.com", "Datos Personales"))
+                        fireAuth.email, "Datos Personales"))
                     .isNotEmpty) {
-                  await bigData.migData(FireStore(), "17asanjuan@gmail.com");
-                  await bigData.uploadMigData(
-                      FireStore(), "17asanjuan@gmail.com");
+                  await bigData.migData(FireStore(), fireAuth.email);
+                  await bigData.uploadMigData(FireStore(), fireAuth.email);
                   // ignore: use_build_context_synchronously
                   Navigator.pushReplacement(
                     context,

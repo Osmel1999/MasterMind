@@ -1,5 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:master_app/Provider/Firebase/fire_store.dart';
+import 'package:provider/provider.dart';
+
+import '../../Provider/bigData.dart';
+import '../../Provider/navProvider.dart';
+import '../../navegationPage.dart';
 
 class MentorSelector extends StatefulWidget {
   @override
@@ -10,6 +16,10 @@ class _MentorSelectorState extends State<MentorSelector> {
   @override
   Widget build(BuildContext context) {
     // final bloc = Provider.of(context);
+    final bigdata = Provider.of<BigData>(context);
+    final fireStore = Provider.of<FireStore>(context);
+    final navProv = Provider.of<NavigationProvider>(context);
+
     var media = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Colors.white,
@@ -18,67 +28,63 @@ class _MentorSelectorState extends State<MentorSelector> {
         child: ListView(
           children: [
             SizedBox(
-              height: media.height * 15.625 / 100,
+              height: media.height * 0.15,
             ),
             Container(
-              padding: EdgeInsets.only(left: media.height * 0.78125 / 100),
+              padding: EdgeInsets.only(left: media.height * 0.07),
               child: Text(
                 'Invita a tu mentor',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.black45,
                   fontFamily: 'Ubuntu',
-                  fontSize: media.height * 4.0625 / 100,
+                  fontSize: media.height * 0.04,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
             SizedBox(
-              height: media.height * 10.9375 / 100,
+              height: media.height * 0.01,
             ),
-            _emailCampo(media),
-            SizedBox(height: media.height * 1.5625 / 100),
-            _boton(media),
+            _emailCampo(media, bigdata),
+            SizedBox(height: media.height * 0.015),
+            _boton(media, bigdata, fireStore, navProv),
           ],
         ),
       ),
     );
   }
 
-  Widget _emailCampo(Size media) {
-    return StreamBuilder(
-      // stream: bloc.emailStream,
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        return Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20.0),
-          ),
-          color: Colors.white60,
-          child: SizedBox(
-            width: media.height * 48.4375 / 100,
-            height: media.height * 7.8125 / 100,
-            child: const TextField(
-              keyboardType: TextInputType.emailAddress,
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.account_circle_outlined),
-                hintText: 'Email',
-                labelStyle: TextStyle(fontFamily: 'Ubuntu'),
-                border: OutlineInputBorder(
-                  borderSide: BorderSide.none,
-                  borderRadius: BorderRadius.all(Radius.circular(40.0)),
-                ),
-                // counterText: snapshot.data,
-                // errorText: snapshot.error,
-              ),
-              // onChanged: bloc.changeEmail,
+  Widget _emailCampo(Size media, BigData bigdata) {
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20.0),
+      ),
+      color: Colors.white60,
+      child: SizedBox(
+        width: media.height * 0.48,
+        height: media.height * 0.078,
+        child: TextField(
+          keyboardType: TextInputType.emailAddress,
+          decoration: const InputDecoration(
+            prefixIcon: Icon(Icons.account_circle_outlined),
+            hintText: 'Email',
+            labelStyle: TextStyle(fontFamily: 'Ubuntu'),
+            border: OutlineInputBorder(
+              borderSide: BorderSide.none,
+              borderRadius: BorderRadius.all(Radius.circular(40.0)),
             ),
+            // counterText: snapshot.data,
+            // errorText: snapshot.error,
           ),
-        );
-      },
+          onChanged: (query) => bigdata.changeMentor(query),
+        ),
+      ),
     );
   }
 
-  Widget _boton(Size media) {
+  Widget _boton(Size media, BigData bigdata, FireStore fireStore,
+      NavigationProvider navProv) {
     return StreamBuilder(
         // stream: bloc.emailStream,
         builder: (BuildContext contex, AsyncSnapshot snapshot) {
@@ -96,8 +102,8 @@ class _MentorSelectorState extends State<MentorSelector> {
             ),
           ),
           child: Text('Siguiente'),
-          onPressed: (snapshot.hasData)
-              ? () => _agregarmeAlMentor(context, media)
+          onPressed: (bigdata.bigData["User"]["Mentor"] != null)
+              ? () => _agregarmeAlMentor(bigdata, fireStore, navProv)
               : null,
         ),
       );
@@ -106,26 +112,26 @@ class _MentorSelectorState extends State<MentorSelector> {
 
   // Aqui colocamos la funcion que agrega mi correo al de mi mentor, el que agregue
 
-  _agregarmeAlMentor(context, Size media) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return Container(
-          margin: EdgeInsets.symmetric(
-              vertical: media.height * 43.75 / 100,
-              horizontal: media.height * 23.828125 / 100),
-          child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(Colors.amber[900]!),
-          ),
-        );
-      },
+  _agregarmeAlMentor(
+      BigData bigdata, FireStore fire, NavigationProvider navProv) {
+    bigdata.save();
+    fire.updateDataCloud(
+        fire.endpoint, bigdata.bigData["User"]["Email"], bigdata.bigData);
+    fire.updateDataMentor(bigdata.bigData["User"]["Mentor"], {
+      bigdata.bigData["User"]["Email"]: {
+        "Progreso": bigdata.bigData["Progreso"],
+        "Equipo": bigdata.bigData["Equipo"],
+        "Agenda": bigdata.bigData["Agenda"],
+        "Sueños": bigdata.bigData["Sueños"],
+        "Metas": bigdata.bigData["Metas"],
+      }
+    });
+    navProv.indexNav = 1;
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (BuildContext context) => const NavigationPage(),
+      ),
     );
-    // bloc.dataUsuario.datosProgress['Mentor@'] = bloc.email.toLowerCase();
-    // bloc.guardarDataBaseProgress();
-    // bloc.uploadProgressToMentor(
-    //     '${bloc.pref.email}', bloc.email, bloc.dataUsuario.datosProgress);
-    // Navigator.pushReplacement(context,
-    //     MaterialPageRoute(builder: (BuildContext context) => DataMinerPage()));
-    // bloc.pref.stepInscription = '1';
   }
 }

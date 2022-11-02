@@ -90,12 +90,13 @@ class _NavigationPageState extends State<NavigationPage> {
           ]),
         ),
       ),
-      bottomNavigationBar: Container(
+      bottomNavigationBar: SizedBox(
         width: media.width,
         height: media.height * 0.12,
         child: SizedBox(
           height: media.height * 0.12,
           child: CurvedNavigationBar(
+            index: navProv.indexNav,
             color: Colors.blueAccent,
             backgroundColor: Colors.transparent,
             items: const [

@@ -8,6 +8,7 @@ import '../../Preferencias/sharedPeference.dart';
 
 class FireStore with ChangeNotifier {
   final databaseReference = FirebaseFirestore.instance;
+  String endpoint = "UsersData";
 
   subirDataCloud(String nombreColeccionDatos, String nombreDocumento,
       Map<String, dynamic> modelDatos) async {
@@ -79,5 +80,13 @@ class FireStore with ChangeNotifier {
         .then((value) => print('Data Deleted'))
         .catchError(
             (error) => print("Failed to delete user's property: $error"));
+  }
+
+  updateDataMentor(String mentor, Map<String, dynamic> data) {
+    databaseReference
+        .collection(endpoint)
+        .doc(mentor)
+        .set(data, SetOptions(merge: true));
+    print('===== DATA ACTUALIZADA =====');
   }
 }

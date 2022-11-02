@@ -2,9 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:master_app/Pages/contactPage.dart';
+import 'package:master_app/widgets/PopUp.dart';
 import 'package:provider/provider.dart';
 
 import '../../Provider/bigData.dart';
+import 'CompromisePage.dart';
 
 class MetasPage extends StatefulWidget {
   @override
@@ -30,11 +32,7 @@ class _MetasPageState extends State<MetasPage> {
     'Platino',
     'Platino Elite'
   ];
-  String rangoSeleccionado = 'Seleccionar Posicion';
-  // late bool openListaOption;
-  // double altoBody = 200.0;
-
-  // final globalBloC = new GlobalBloc();
+  // String rangoSeleccionado = 'Seleccionar Posicion';
   @override
   void initState() {
     super.initState();
@@ -50,8 +48,13 @@ class _MetasPageState extends State<MetasPage> {
           children: [
             Container(
               padding: const EdgeInsets.only(top: 5.0),
-              child: Image.asset(
-                'assets/imagenes/metas.png',
+              child: SizedBox(
+                height: media.height * 0.6,
+                width: media.width,
+                child: Image.asset(
+                  fit: BoxFit.fill,
+                  'assets/imagenes/niveles_rangos.png',
+                ),
               ),
             ),
             Positioned(
@@ -67,50 +70,47 @@ class _MetasPageState extends State<MetasPage> {
                         fontWeight: FontWeight.bold,
                       )),
                   (wasSelected == false)
-                      // ignore: deprecated_member_use
                       ? ElevatedButton(
-                          // style: raisedButtonStyle,
                           child: const Text('Seleccionar rango',
                               style: TextStyle(fontFamily: 'Ubuntu')),
                           onPressed: () {
-                            showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return popUpMeta(media);
-                                });
-                            setState(() {
-                              // altoBody = 150.0;
-                              // openListaOption = true;
-                            });
+                            popUp(context, media, bigData, rangos(media));
+                            // showDialog(
+                            //     context: context,
+                            //     builder: (context) {
+                            //       return popUpMeta(media);
+                            //     });
+                            // setState(() {
+                            //   // altoBody = 150.0;
+                            //   // openListaOption = true;
+                            // });
                           },
                         )
                       : ElevatedButton(
-                          // style: raisedButtonStyle,
                           child: const Text('Siguiente',
                               style: TextStyle(fontFamily: 'Ubuntu')),
                           onPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return Container(
-                                  margin: const EdgeInsets.symmetric(
-                                      vertical: 280.0, horizontal: 152.5),
-                                  child: CircularProgressIndicator(
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                        Colors.amber[900]!),
-                                  ),
-                                );
-                              },
-                            );
+                            // showDialog(
+                            //   context: context,
+                            //   builder: (context) {
+                            //     return Container(
+                            //       margin: const EdgeInsets.symmetric(
+                            //           vertical: 280.0, horizontal: 152.5),
+                            //       child: CircularProgressIndicator(
+                            //         valueColor: AlwaysStoppedAnimation<Color>(
+                            //             Colors.amber[900]!),
+                            //       ),
+                            //     );
+                            //   },
+                            // );
+                            // popUp(context, media, bigData, rangos());
                             bigData.selectedRango(rangoLista[_selectedRango]);
                             bigData.save();
-                            // globalBloC.addDatosUser(_selectedRango);
-                            // Navigator.pushReplacement(
-                            //     context,
-                            //     MaterialPageRoute(
-                            //         builder: (BuildContext context) =>
-                            //             MetaExplain_2(_selectedRango)));
-                            // globalBloC.pref.stepInscription = '4';
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                        const CompromisoPage()));
                           },
                         ),
                 ],
@@ -118,6 +118,52 @@ class _MetasPageState extends State<MetasPage> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget rangos(Size media) {
+    return Material(
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              TextButton(
+                child: Text("Aceptar"),
+                onPressed: () {
+                  setState(() {
+                    wasSelected = true;
+                  });
+                  Navigator.pop(context);
+                },
+              )
+            ],
+          ),
+          SizedBox(
+            height: media.height * 0.3,
+            width: media.width,
+            child: StatefulBuilder(
+                builder: (BuildContext context, StateSetter xetState) {
+              return ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: rangoLista.length,
+                  itemBuilder: (BuildContext context, int i) {
+                    return RadioListTile(
+                      controlAffinity: ListTileControlAffinity.platform,
+                      value: i,
+                      title: Text(rangoLista[i]),
+                      groupValue: _selectedRango,
+                      onChanged: (value) {
+                        // print('valor seleccionado: $value');
+                        xetState(() => _selectedRango = value!);
+                        // print('Rango seleccionado: $_selectedRango');
+                      },
+                    );
+                  });
+            }),
+          ),
+        ],
       ),
     );
   }
@@ -144,6 +190,7 @@ class _MetasPageState extends State<MetasPage> {
                     title: Text(rangoLista[i]),
                     groupValue: _selectedRango,
                     onChanged: (value) {
+                      print('valor seleccionado: $value');
                       xetState(() => _selectedRango = value!);
                       print('Rango seleccionado: $_selectedRango');
                     },
