@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:master_app/Pages/SignIn/DreamPage.dart';
+import 'package:master_app/Preferencias/sharedPeference.dart';
 import 'package:master_app/Provider/Firebase/fire_store.dart';
 import 'package:provider/provider.dart';
 
@@ -17,84 +18,40 @@ class SignInDemo extends StatefulWidget {
 }
 
 class SignInDemoState extends State<SignInDemo> {
+  FireStore fireStore = FireStore();
+  final pref = PreferenciasUsuario();
+  bool autoSignIn = false;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // BigData().autoAuth();
-    });
+    WidgetsBinding.instance.addPostFrameCallback((_) async {});
   }
 
-  Widget _buildBody(Size media) {
-    final fireAuth = Provider.of<FireAuth>(context);
+  Widget _buildBody(Size media, FireAuth fireAuth) {
     final bigData = Provider.of<BigData>(context);
     final dreamProvider = Provider.of<DreamProvider>(context);
-    FireStore fireStore = FireStore();
+
     if (fireAuth.currentUser != null) {
-      return const Center(
-        child: CircularProgressIndicator(
-          strokeWidth: 2,
-        ),
-      );
-      // return Column(
-      //   mainAxisAlignment: MainAxisAlignment.spaceAround,
-      //   children: <Widget>[
-      //     ListTile(
-      //       leading: GoogleUserCircleAvatar(
-      //         identity: fireAuth.currentUser!,
-      //       ),
-      //       title: Text(fireAuth.currentUser!.displayName ?? ''),
-      //       subtitle: Text(fireAuth.currentUser!.email),
-      //     ),
-      //     const Text('Signed in successfully.'),
-      //     Text(fireAuth.currentUser!.displayName!),
-      //     ElevatedButton(
-      //       onPressed: fireAuth.handleSignOut,
-      //       child: const Text('SIGN OUT'),
-      //     ),
-      //     const ElevatedButton(
-      //       onPressed: null,
-      //       child: Text('REFRESH'),
-      //     ),
-      //   ],
-      // );
+      autoSignIn = true;
+      fireAuth.signInWithGoogle(fireAuth.currentUser);
+      return const NavigationPage();
     } else {
       return Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
-          const Text('You are not currently signed in.'),
           SizedBox(
-            height: media.height * 0.05,
-            width: media.width * 0.35,
+            height: media.height * 0.1,
+            width: media.width * 0.6,
+            child: Placeholder(),
+          ),
+          const Text('Bienvenido a Master Mind'),
+          SizedBox(
+            height: media.height * 0.03,
+            width: media.width * 0.8,
             child: ElevatedButton(
               onPressed: () async {
-                await fireAuth.handleSignIn(context);
-                bigData.bigData["User"]["Email"] = fireAuth.email;
-                bigData.bigData["User"]["Name"] = fireAuth.displayName;
-                if ((await fireStore.bajarDataCloud(
-                        fireAuth.email, "Datos Personales"))
-                    .isNotEmpty) {
-                  await bigData.migData(FireStore(), fireAuth.email);
-                  await bigData.uploadMigData(FireStore(), fireAuth.email);
-                  // ignore: use_build_context_synchronously
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute<void>(
-                      builder: (BuildContext context) => const NavigationPage(),
-                    ),
-                  );
-                } else {
-                  // Lo iniciamos dentro de Phlow (Planification Flow).
-                  await dreamProvider.dowloadDreams(fireStore);
-                  // ignore: use_build_context_synchronously
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute<void>(
-                      builder: (BuildContext context) => const Dreams(),
-                    ),
-                  );
-                }
+                fireAuth.signIn(context, bigData, fireStore, dreamProvider);
               },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -113,13 +70,11 @@ class SignInDemoState extends State<SignInDemo> {
   @override
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
+    final fireAuth = Provider.of<FireAuth>(context);
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Google Sign In'),
-        ),
         body: ConstrainedBox(
-          constraints: const BoxConstraints.expand(),
-          child: _buildBody(media),
-        ));
+      constraints: const BoxConstraints.expand(),
+      child: _buildBody(media, fireAuth),
+    ));
   }
 }

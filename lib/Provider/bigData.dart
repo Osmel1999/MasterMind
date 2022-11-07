@@ -29,7 +29,9 @@ class BigData with ChangeNotifier {
             : {
                 "Agenda": {},
                 "Sueños": {},
-                "Compromisos": {},
+                "Compromiso": {
+                  "init": "2022-10-28",
+                },
                 "User": {},
                 "Membresia": {},
                 "Equipo": {},
@@ -37,11 +39,12 @@ class BigData with ChangeNotifier {
                 "Progreso": {},
               }
         : null;
+    pref.bigData = jsonEncode(bigData);
   }
 
   Map<String, String> toMig = {
     "Datos Agenda": "Agenda",
-    "Datos Compromisos": "Compromisos",
+    "Datos Compromisos": "Compromiso",
     // "Datos Contactos",
     "Datos Personales": "User",
     "Datos Progreso": "Progreso",
@@ -97,15 +100,17 @@ class BigData with ChangeNotifier {
     pref.bigData = json.encode(bigData);
   }
 
-  addProgress(String key, int value) {
-    String current = weekIndicator(DateTime.parse("2022-10-28"));
+  String addAction(String key, int value) {
+    String current =
+        weekIndicator(DateTime.parse(bigData["Compromiso"]["init"]));
     if (bigData["Progreso"][current] == null) bigData["Progreso"][current] = {};
-    addAction(key, current);
+    addProgress(key, current);
     save();
+    return key;
     // notifyListeners();
   }
 
-  addAction(String action, String current) {
+  addProgress(String action, String current) {
     // String current = weekIndicator(DateTime.parse("2022-10-28"));
     if (bigData["Progreso"][current]["activity"] == null) {
       bigData["Progreso"][current]["activity"] = {};

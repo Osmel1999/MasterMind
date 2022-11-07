@@ -56,7 +56,7 @@ class _CompromisoPageState extends State<CompromisoPage> {
                           child: const Text('Aceptar',
                               style: TextStyle(fontFamily: 'Ubuntu')),
                           onPressed: () {
-                            agenda.addCompromiso(context, media);
+                            agenda.addCompromiso(context, media, bigdata);
                             // showDialog(
                             //   context: context,
                             //   builder: (context) {

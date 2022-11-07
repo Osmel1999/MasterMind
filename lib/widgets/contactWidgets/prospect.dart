@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:master_app/Provider/bigData.dart';
+import 'package:master_app/widgets/PopUp.dart';
 // import 'package:flutter/src/widgets/container.dart';
 // import 'package:flutter/src/widgets/framework.dart';
 // import 'package:master_app/widgets/buscadorTXT.dart';
@@ -18,6 +20,8 @@ class _ProspectState extends State<Prospect> {
   @override
   Widget build(BuildContext context) {
     final contactProvider = Provider.of<ContactProvider>(context);
+    final bigdata = Provider.of<BigData>(context);
+    var media = MediaQuery.of(context).size;
 
     return ListView.builder(
       shrinkWrap: true,
@@ -44,6 +48,9 @@ class _ProspectState extends State<Prospect> {
                                   color: Colors.blue,
                                 ),
                                 onPressed: () {
+                                  // cuantificar la llamada.
+                                  bigdata.addAction("Call", 1);
+                                  quest(context, "Call", bigdata);
                                   toCall(
                                       "${contactProvider.mapaContact.values.toList()[i]}");
                                 },

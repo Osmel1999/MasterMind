@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:master_app/Preferencias/sharedPeference.dart';
 import '../local_notification/local_notification.dart';
+import 'bigData.dart';
 
 class DynamicBoxProvider with ChangeNotifier {
   int boxPosition = 0;
@@ -35,7 +36,8 @@ class AgendaProvider with ChangeNotifier {
     // dateSelected = DateTime.parse("2022-10-11");
     dataDay = "${dateSelected.year}-${dateSelected.month}-${dateSelected.day}";
 
-    dbAgenda = pref.agendPref.isNotEmpty ? json.decode(pref.agendPref) : {};
+    dbAgenda =
+        pref.bigData.isNotEmpty ? json.decode(pref.bigData)["Agenda"] : {};
     agenda = dbAgenda[dataDay] ?? {};
   }
 
@@ -46,7 +48,7 @@ class AgendaProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void addEvent(BuildContext context, Size media) {
+  void addEvent(BuildContext context, Size media, BigData bigdata) {
     TextEditingController eNoteController = TextEditingController();
     showCupertinoModalPopup(
         context: context,
@@ -77,9 +79,12 @@ class AgendaProvider with ChangeNotifier {
                             TextButton(
                                 onPressed: (eNoteController.text.isNotEmpty)
                                     ? () {
-                                        addDB(eventDateTime!,
-                                            eNoteController.text, null);
-
+                                        addDB(
+                                            eventDateTime!,
+                                            eNoteController.text,
+                                            null,
+                                            bigdata);
+                                        dbAgenda;
                                         Navigator.of(context).pop();
                                         notificationService
                                             .scheduleNotification(
@@ -153,7 +158,7 @@ class AgendaProvider with ChangeNotifier {
         });
   }
 
-  addDB(DateTime date, String query, String? action) {
+  addDB(DateTime date, String query, String? action, BigData bigdata) {
     // agregamos la nueva data en (String)
     Map temp = {
       ...dbAgenda["${date.year}-${date.month}-${date.day}"] ?? {},
@@ -181,10 +186,11 @@ class AgendaProvider with ChangeNotifier {
     }
     agenda = dbAgenda[dataDay] ?? {};
     notifyListeners();
-    pref.agendPref = json.encode(dbAgenda);
+    pref.bigData =
+        json.encode({...json.decode(pref.bigData), "Agenda": dbAgenda});
   }
 
-  void addCompromiso(BuildContext context, Size media) {
+  void addCompromiso(BuildContext context, Size media, BigData bigdata) {
     TextEditingController eNoteController = TextEditingController();
     showCupertinoModalPopup(
         context: context,
@@ -215,8 +221,11 @@ class AgendaProvider with ChangeNotifier {
                             TextButton(
                                 onPressed: (eNoteController.text.isNotEmpty)
                                     ? () {
-                                        addDB(eventDateTime!,
-                                            eNoteController.text, null);
+                                        addDB(
+                                            eventDateTime!,
+                                            eNoteController.text,
+                                            null,
+                                            bigdata);
 
                                         Navigator.of(context).pop();
                                         notificationService

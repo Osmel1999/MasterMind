@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'Pages/contactPage.dart';
 import 'Pages/homePage.dart';
 import 'Pages/statsPage.dart';
+import 'Provider/bigData.dart';
 import 'Provider/navProvider.dart';
 import 'package:master_app/local_notification/local_notification.dart';
 
@@ -32,6 +33,7 @@ class _NavigationPageState extends State<NavigationPage> {
     var media = MediaQuery.of(context).size;
     final navProv = Provider.of<NavigationProvider>(context);
     final agendaProvider = Provider.of<AgendaProvider>(context);
+    final bigdata = Provider.of<BigData>(context);
 
     return Scaffold(
       body: Padding(
@@ -60,7 +62,8 @@ class _NavigationPageState extends State<NavigationPage> {
                         ),
                         onTap: (navProv.indexNav == 0)
                             ? () async {
-                                agendaProvider.addEvent(context, media);
+                                agendaProvider.addEvent(
+                                    context, media, bigdata);
                               }
                             : null,
                       )),

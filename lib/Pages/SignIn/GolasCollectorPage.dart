@@ -74,7 +74,7 @@ class _MetasPageState extends State<MetasPage> {
                           child: const Text('Seleccionar rango',
                               style: TextStyle(fontFamily: 'Ubuntu')),
                           onPressed: () {
-                            popUp(context, media, bigData, rangos(media));
+                            popUp(context, media, rangos(media));
                             // showDialog(
                             //     context: context,
                             //     builder: (context) {

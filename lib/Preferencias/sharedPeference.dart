@@ -52,4 +52,13 @@ class PreferenciasUsuario {
   set bigData(String value) {
     _prefs.setString('bigData', value);
   }
+
+  // autoAuth
+  // bool get autoAuth {
+  //   return _prefs.getBool('autoAuth') ?? false;
+  // }
+
+  // set autoAuth(bool value) {
+  //   _prefs.setBool('autoAuth', value);
+  // }
 }
