@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:master_app/Provider/bigData.dart';
 import 'package:provider/provider.dart';
 
 import '../Provider/contactProvider.dart';
 
 class SearchWidget extends StatefulWidget {
-  const SearchWidget({super.key});
+  String listType;
+  SearchWidget({super.key, required this.listType});
 
   @override
   State<SearchWidget> createState() => _SearchWidgetState();
@@ -29,6 +31,7 @@ class _SearchWidgetState extends State<SearchWidget> {
     final contactProvider =
         Provider.of<ContactProvider>(context, listen: false);
     var media = MediaQuery.of(context).size;
+    final bigdata = Provider.of<BigData>(context);
     // bool isSearching = searchController.text.isNotEmpty;
     // contactProvider.listaSugerida = (query.isEmpty)
     //     ? sinTextoEscrito
@@ -65,7 +68,7 @@ class _SearchWidgetState extends State<SearchWidget> {
         ),
         // controller: searchController,
         onChanged: (text) {
-          contactProvider.searchContact(text);
+          contactProvider.searchContact(text, bigdata, widget.listType);
         },
       ),
     );

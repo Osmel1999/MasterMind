@@ -15,11 +15,15 @@ class BigData with ChangeNotifier {
   Map<String, dynamic> d2B = {};
 
   DateTime now = DateTime.now();
+  String today = "";
+
+  String respons = "";
 
   late int? numWeek;
 
   BigData() {
     load();
+    today = "${now.year}-${now.month}-${now.day}";
   }
 
   load() {
@@ -27,12 +31,19 @@ class BigData with ChangeNotifier {
         ? bigData = (pref.bigData.isNotEmpty)
             ? json.decode(pref.bigData)
             : {
-                "Agenda": {},
+                "Sesion": "",
+                "Agenda": {"2022-10-28": {}},
                 "Sueños": {},
+                "Contactos": {
+                  "Prospectos": {},
+                  "En espera": {},
+                  "Clientes": {},
+                  "Invitado": {},
+                },
                 "Compromiso": {
                   "init": "2022-10-28",
                 },
-                "User": {},
+                "User": {"Email": ""},
                 "Membresia": {},
                 "Equipo": {},
                 "Metas": {},
@@ -116,33 +127,33 @@ class BigData with ChangeNotifier {
       bigData["Progreso"][current]["activity"] = {};
     }
     // Revisamos que accion es la ejecutada
-    if (action == "call") {
-      if (bigData["Progreso"][current]["activity"]["call"] == null) {
-        bigData["Progreso"][current]["activity"]["call"] = 0;
+    if (action == "Llamada") {
+      if (bigData["Progreso"][current]["activity"]["Llamada"] == null) {
+        bigData["Progreso"][current]["activity"]["Llamada"] = 0;
       }
-      bigData["Progreso"][current]["activity"]["call"] =
-          bigData["Progreso"][current]["activity"]["call"] + 1;
+      bigData["Progreso"][current]["activity"]["Llamada"] =
+          bigData["Progreso"][current]["activity"]["Llamada"] + 1;
       // PLAN
-    } else if (action == "plan") {
-      if (bigData["Progreso"][current]["activity"]["plan"] == null) {
-        bigData["Progreso"][current]["activity"]["plan"] = 0;
+    } else if (action == "Plan") {
+      if (bigData["Progreso"][current]["activity"]["Plan"] == null) {
+        bigData["Progreso"][current]["activity"]["Plan"] = 0;
       }
-      bigData["Progreso"][current]["activity"]["plan"] =
-          bigData["Progreso"][current]["activity"]["plan"] + 1;
+      bigData["Progreso"][current]["activity"]["Plan"] =
+          bigData["Progreso"][current]["activity"]["Plan"] + 1;
       // FOLLOW
-    } else if (action == "follow") {
-      if (bigData["Progreso"][current]["activity"]["follow"] == null) {
-        bigData["Progreso"][current]["activity"]["follow"] = 0;
+    } else if (action == "Seguimiento") {
+      if (bigData["Progreso"][current]["activity"]["Seguimiento"] == null) {
+        bigData["Progreso"][current]["activity"]["Seguimiento"] = 0;
       }
-      bigData["Progreso"][current]["activity"]["follow"] =
-          bigData["Progreso"][current]["activity"]["follow"] + 1;
+      bigData["Progreso"][current]["activity"]["Seguimiento"] =
+          bigData["Progreso"][current]["activity"]["Seguimiento"] + 1;
       // PLANIFICACION
-    } else if (action == "planificacion") {
-      if (bigData["Progreso"][current]["activity"]["planificacion"] == null) {
-        bigData["Progreso"][current]["activity"]["planificacion"] = 0;
+    } else if (action == "Planificacion") {
+      if (bigData["Progreso"][current]["activity"]["Planificacion"] == null) {
+        bigData["Progreso"][current]["activity"]["Planificacion"] = 0;
       }
-      bigData["Progreso"][current]["activity"]["planificacion"] =
-          bigData["Progreso"][current]["activity"]["planificacion"] + 1;
+      bigData["Progreso"][current]["activity"]["Planificacion"] =
+          bigData["Progreso"][current]["activity"]["Planificacion"] + 1;
     }
   }
 
@@ -157,6 +168,15 @@ class BigData with ChangeNotifier {
     return "${init.year}${init.month}${init.day}";
   }
 
+  updateSesion(FireStore fireStore) {
+    if (bigData["Sesion"].isEmpty ||
+        DateTime.parse(bigData["Sesion"]).isBefore(now)) {
+      bigData["Sesion"] = "${now.year}-${now.month}-${now.day}";
+      fireStore.updateDataCloud("UsersData", bigData["User"]["Email"], bigData);
+      pref.bigData = json.encode(bigData);
+    }
+  }
+
   changeMentor(String query) {
     bool ok = (query.contains("@") && query.contains(".com"));
     if (query.isNotEmpty && ok) {
@@ -167,4 +187,30 @@ class BigData with ChangeNotifier {
       notifyListeners();
     }
   }
+
+  checkContacts(Map contacts) {
+    if (contacts.length != bigData["Contactos"]["Prospectos"].length) {
+      contacts.forEach((k, v) {
+        if (bigData["Contactos"]["Prospectos"][k] == null) {
+          bigData["Contactos"]["Prospectos"][k] = v;
+        }
+      });
+    }
+  }
+
+  moveContact(
+      {required String from, required String to, required String name}) {
+    bigData["Contactos"][to][name] = bigData["Contactos"][from][name];
+    bigData["Contactos"][from].remove(name);
+    notifyListeners();
+  }
+}
+
+class DataModel {
+  List agendaConcept = [
+    "Llamada",
+    "Plan",
+    "Seguimiento",
+    "Planificacion",
+  ];
 }

@@ -8,6 +8,7 @@ import 'package:master_app/widgets/contactWidgets/prospect.dart';
 import 'package:master_app/widgets/contactWidgets/waitting.dart';
 import 'package:provider/provider.dart';
 
+import '../Provider/bigData.dart';
 import '../widgets/buscadorTXT.dart';
 
 class ContactsPage extends StatefulWidget {
@@ -21,7 +22,7 @@ CarouselController controller = CarouselController();
 
 Map<String, Widget> listas = {
   "Prospectos": Prospect(),
-  "consumidores": Costumers(),
+  "Clientes": Costumers(),
   "En espera": Waitting(),
 };
 
@@ -29,8 +30,13 @@ class _ContactsPageState extends State<ContactsPage> {
   @override
   Widget build(BuildContext context) {
     final contactProvider = Provider.of<ContactProvider>(context);
-    // ContactProvider contactProvider = ContactProvider();
+    final bigdata = Provider.of<BigData>(context);
     var media = MediaQuery.of(context).size;
+
+    bigdata.checkContacts(contactProvider.mapaContact);
+
+    int index = 0;
+
     return SizedBox(
       height: media.height * 0.75,
       width: media.width,
@@ -44,7 +50,8 @@ class _ContactsPageState extends State<ContactsPage> {
                 child: title(
                     listas.keys.toList(), contactProvider.contactIndex, media),
               ),
-              SearchWidget(),
+              SearchWidget(
+                  listType: listas.keys.toList()[contactProvider.contactIndex]),
             ],
           ),
           // Divider(),

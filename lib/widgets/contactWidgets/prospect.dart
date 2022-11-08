@@ -22,22 +22,21 @@ class _ProspectState extends State<Prospect> {
     final contactProvider = Provider.of<ContactProvider>(context);
     final bigdata = Provider.of<BigData>(context);
     var media = MediaQuery.of(context).size;
+    Map mapaContact = bigdata.bigData["Contactos"]["Prospectos"];
 
     return ListView.builder(
       shrinkWrap: true,
-      itemCount: contactProvider.mapaContact.isNotEmpty
-          ? contactProvider.mapaContact.length
-          : 1,
+      itemCount: mapaContact.isNotEmpty ? mapaContact.length : 1,
       itemBuilder: (context, i) {
-        return (contactProvider.mapaContact.isNotEmpty)
+        String contact =
+            (mapaContact.isNotEmpty) ? mapaContact.keys.toList()[i] : "";
+        return (mapaContact.isNotEmpty)
             ? (contactProvider.listaSugerida.isEmpty ||
-                    contactProvider.listaSugerida
-                        .contains(contactProvider.mapaContact.keys.toList()[i]))
+                    contactProvider.listaSugerida.contains(contact))
                 ? Column(
                     children: [
                       ListTile(
-                        title:
-                            Text(contactProvider.mapaContact.keys.toList()[i]),
+                        title: Text(contact),
                         trailing: SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: Row(
@@ -49,10 +48,9 @@ class _ProspectState extends State<Prospect> {
                                 ),
                                 onPressed: () {
                                   // cuantificar la llamada.
-                                  bigdata.addAction("Call", 1);
-                                  quest(context, "Call", bigdata);
-                                  toCall(
-                                      "${contactProvider.mapaContact.values.toList()[i]}");
+                                  bigdata.addAction("Llamada", 1);
+                                  quest(context, "Llamada", contact, bigdata);
+                                  toCall(mapaContact[contact]);
                                 },
                               ),
                               IconButton(
@@ -62,8 +60,7 @@ class _ProspectState extends State<Prospect> {
                                 ),
                                 onPressed: () {
                                   // Whatsapp
-                                  toWhatsapp(
-                                      "${contactProvider.mapaContact.values.toList()[i]}",
+                                  toWhatsapp(contact,
                                       "Hola! \n Me gustaría hablarte de algo importante. Tienes un minuto?");
                                 },
                               )

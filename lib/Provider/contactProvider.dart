@@ -2,6 +2,8 @@ import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import 'bigData.dart';
+
 class ContactProvider with ChangeNotifier {
   late PermissionStatus contactosStatus;
   List<Contact> contactos = [];
@@ -21,17 +23,17 @@ class ContactProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  searchContact(String query) {
+  searchContact(String query, BigData bigdata, listType) {
     listaSugerida = [];
     if (query.isNotEmpty) {
-      mapaContact.forEach((k, v) {
+      bigdata.bigData["Contactos"][listType].forEach((k, v) {
         if ((k.length >= query.length) &&
             (k.substring(0, query.length) == query)) {
           listaSugerida.add(k);
         }
       });
       if (listaSugerida.isEmpty) {
-        mapaContact.forEach((k, v) {
+        bigdata.bigData["Contactos"][listType].forEach((k, v) {
           if (k.toLowerCase().contains(query.toLowerCase())) {
             listaSugerida.add(k);
           }

@@ -35,6 +35,12 @@ class _NavigationPageState extends State<NavigationPage> {
     final agendaProvider = Provider.of<AgendaProvider>(context);
     final bigdata = Provider.of<BigData>(context);
 
+    initState() {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        (DateTime.parse(bigdata.bigData["Sesion"]));
+      });
+    }
+
     return Scaffold(
       body: Padding(
         padding: EdgeInsets.symmetric(

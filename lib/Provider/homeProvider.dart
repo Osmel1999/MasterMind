@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:master_app/Preferencias/sharedPeference.dart';
 import '../local_notification/local_notification.dart';
+import '../widgets/PopUp.dart';
 import 'bigData.dart';
 
 class DynamicBoxProvider with ChangeNotifier {
@@ -54,111 +55,107 @@ class AgendaProvider with ChangeNotifier {
         context: context,
         builder: (BuildContext builder) {
           return Material(
-            child: StatefulBuilder(builder: (context, setState) {
-              return Container(
-                  height: media.height * 0.5,
-                  width: media.width,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text("Agendar evento",
-                                textAlign: TextAlign.left,
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                )),
-                            TextButton(
-                                onPressed: (eNoteController.text.isNotEmpty)
-                                    ? () {
-                                        addDB(
-                                            eventDateTime!,
-                                            eNoteController.text,
-                                            null,
-                                            bigdata);
-                                        dbAgenda;
-                                        Navigator.of(context).pop();
-                                        notificationService
-                                            .scheduleNotification(
-                                                'Agenda',
-                                                eNoteController.text,
-                                                eventDateTime!,
-                                                1);
-                                      }
-                                    : null,
-                                child: Text(
-                                  "Listo",
-                                  style: TextStyle(
-                                      color: (eNoteController.text.isNotEmpty)
-                                          ? Colors.blueAccent
-                                          : Colors.grey[400]),
-                                )),
-                          ],
-                        ),
+            child: Container(
+                height: media.height * 0.5,
+                width: media.width,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text("Agendar evento",
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              )),
+                          TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                                addConcept(context: context, lista: []);
+                                // Navigator.pop(context);
+                              },
+                              child: const Text(
+                                "Listo",
+                                style: TextStyle(color: Colors.blueAccent),
+                              )),
+                        ],
                       ),
-                      Container(
-                        height: media.height * 0.05,
-                        width: media.width * 0.8,
-                        decoration: BoxDecoration(
-                          color: Colors.grey[300],
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(10.0)),
-                        ),
-                        child: TextFormField(
-                          cursorWidth: 2,
-                          cursorHeight: 20,
-                          textCapitalization: TextCapitalization.sentences,
-                          decoration: const InputDecoration(
-                            border: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                            errorBorder: InputBorder.none,
-                            disabledBorder: InputBorder.none,
-                            contentPadding:
-                                EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-                            fillColor: Colors.white54,
-                            // labelText: 'Buscar contacto',
-                            labelStyle: TextStyle(fontFamily: 'Ubuntu'),
-                            prefixIcon: Icon(
-                              Icons.event_note_rounded,
-                              color: Colors.blueAccent,
-                              size: 20.0,
-                            ),
-                          ),
-                          controller: eNoteController,
-                          onChanged: (query) => setState(() {}),
-                        ),
+                    ),
+                    Container(
+                      height: media.height * 0.3,
+                      width: media.width * 0.9,
+                      color: Colors.white,
+                      child: CupertinoDatePicker(
+                        mode: CupertinoDatePickerMode.dateAndTime,
+                        onDateTimeChanged: (date) {
+                          eventDateTime = date;
+                        },
+                        initialDateTime: DateTime.now(),
+                        minimumYear: DateTime.now().year,
+                        maximumYear: DateTime.now().year + 1,
                       ),
-                      Container(
-                        height: media.height * 0.3,
-                        width: media.width * 0.9,
-                        color: Colors.white,
-                        child: CupertinoDatePicker(
-                          mode: CupertinoDatePickerMode.dateAndTime,
-                          onDateTimeChanged: (date) {
-                            eventDateTime = date;
-                          },
-                          initialDateTime: DateTime.now(),
-                          minimumYear: DateTime.now().year,
-                          maximumYear: DateTime.now().year + 1,
-                        ),
-                      ),
-                    ],
-                  ));
-            }),
+                    ),
+                  ],
+                )),
           );
         });
   }
 
-  addDB(DateTime date, String query, String? action, BigData bigdata) {
+  addConcept({required BuildContext context, required List<Widget> lista}) {
+    var media = MediaQuery.of(context).size;
+    final dataModel = DataModel();
+    String concept = dataModel.agendaConcept[0];
+    showCupertinoModalPopup(
+        context: context,
+        builder: (context) {
+          return Container(
+            height: media.height * 0.4,
+            width: media.width,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Column(
+              children: [
+                Container(
+                  alignment: Alignment.centerRight,
+                  padding: EdgeInsets.only(right: media.width * 0.01),
+                  child: TextButton(
+                    child: const Text("Listo"),
+                    onPressed: () {
+                      addDB(eventDateTime!, concept);
+                      dbAgenda;
+                      Navigator.of(context).pop();
+                      notificationService.scheduleNotification(
+                          'Agenda', concept, eventDateTime!, 1);
+                    },
+                  ),
+                ),
+                SizedBox(
+                  // width: media.width * 0.8,
+                  height: media.height * 0.3,
+                  child: CupertinoPicker(
+                      itemExtent: 50,
+                      onSelectedItemChanged: (index) {
+                        concept = dataModel.agendaConcept[index];
+                      },
+                      children: option(datos: dataModel.agendaConcept)),
+                ),
+              ],
+            ),
+          );
+        });
+  }
+
+  addDB(DateTime date, String query) {
     // agregamos la nueva data en (String)
     Map temp = {
       ...dbAgenda["${date.year}-${date.month}-${date.day}"] ?? {},
@@ -196,106 +193,64 @@ class AgendaProvider with ChangeNotifier {
         context: context,
         builder: (BuildContext builder) {
           return Material(
-            child: StatefulBuilder(builder: (context, setState) {
-              return Container(
-                  height: media.height * 0.5,
-                  width: media.width,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text("Agendar evento",
-                                textAlign: TextAlign.left,
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                )),
-                            TextButton(
-                                onPressed: (eNoteController.text.isNotEmpty)
-                                    ? () {
-                                        addDB(
-                                            eventDateTime!,
-                                            eNoteController.text,
-                                            null,
-                                            bigdata);
+            child: Container(
+                height: media.height * 0.5,
+                width: media.width,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text("Agendar evento",
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              )),
+                          TextButton(
+                              onPressed: () {
+                                addDB(
+                                  eventDateTime!,
+                                  eNoteController.text,
+                                );
 
-                                        Navigator.of(context).pop();
-                                        notificationService
-                                            .scheduleNotification(
-                                                'Agenda',
-                                                eNoteController.text,
-                                                eventDateTime!,
-                                                1);
-                                      }
-                                    : null,
-                                child: Text(
-                                  "Listo",
-                                  style: TextStyle(
-                                      color: (eNoteController.text.isNotEmpty)
-                                          ? Colors.blueAccent
-                                          : Colors.grey[400]),
-                                )),
-                          ],
-                        ),
+                                Navigator.of(context).pop();
+                                notificationService.scheduleNotification(
+                                    'Agenda',
+                                    eNoteController.text,
+                                    eventDateTime!,
+                                    1);
+                              },
+                              child: const Text(
+                                "Listo",
+                                style: TextStyle(color: Colors.blueAccent),
+                              )),
+                        ],
                       ),
-                      Container(
-                        height: media.height * 0.05,
-                        width: media.width * 0.8,
-                        decoration: BoxDecoration(
-                          color: Colors.grey[300],
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(10.0)),
-                        ),
-                        child: TextFormField(
-                          cursorWidth: 2,
-                          cursorHeight: 20,
-                          textCapitalization: TextCapitalization.sentences,
-                          decoration: const InputDecoration(
-                            border: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                            errorBorder: InputBorder.none,
-                            disabledBorder: InputBorder.none,
-                            contentPadding:
-                                EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-                            fillColor: Colors.white54,
-                            // labelText: 'Buscar contacto',
-                            labelStyle: TextStyle(fontFamily: 'Ubuntu'),
-                            prefixIcon: Icon(
-                              Icons.event_note_rounded,
-                              color: Colors.blueAccent,
-                              size: 20.0,
-                            ),
-                          ),
-                          controller: eNoteController,
-                          onChanged: (query) => setState(() {}),
-                        ),
+                    ),
+                    Container(
+                      height: media.height * 0.3,
+                      width: media.width * 0.9,
+                      color: Colors.white,
+                      child: CupertinoDatePicker(
+                        mode: CupertinoDatePickerMode.dateAndTime,
+                        onDateTimeChanged: (date) {
+                          eventDateTime = date;
+                        },
+                        initialDateTime: DateTime.now(),
+                        minimumYear: DateTime.now().year,
+                        maximumYear: DateTime.now().year + 1,
                       ),
-                      Container(
-                        height: media.height * 0.3,
-                        width: media.width * 0.9,
-                        color: Colors.white,
-                        child: CupertinoDatePicker(
-                          mode: CupertinoDatePickerMode.dateAndTime,
-                          onDateTimeChanged: (date) {
-                            eventDateTime = date;
-                          },
-                          initialDateTime: DateTime.now(),
-                          minimumYear: DateTime.now().year,
-                          maximumYear: DateTime.now().year + 1,
-                        ),
-                      ),
-                    ],
-                  ));
-            }),
+                    ),
+                  ],
+                )),
           );
         });
   }

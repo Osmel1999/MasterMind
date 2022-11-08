@@ -1,11 +1,12 @@
 import 'package:url_launcher/url_launcher.dart';
 
 Future<void> toCall(String phoneNumber) async {
+  bool launch;
   final Uri launchUri = Uri(
     scheme: 'tel',
     path: phoneNumber,
   );
-  await launchUrl(launchUri);
+  launch = await launchUrl(launchUri);
 }
 
 Future<void> toWhatsapp(String phone, String query) async {
