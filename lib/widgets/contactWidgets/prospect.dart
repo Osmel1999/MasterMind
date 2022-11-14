@@ -48,7 +48,7 @@ class _ProspectState extends State<Prospect> {
                                 ),
                                 onPressed: () {
                                   // cuantificar la llamada.
-                                  bigdata.addAction("Llamada", 1);
+                                  bigdata.addAction(context, "Llamada");
                                   quest(context, "Llamada", contact, bigdata);
                                   toCall(mapaContact[contact]);
                                 },

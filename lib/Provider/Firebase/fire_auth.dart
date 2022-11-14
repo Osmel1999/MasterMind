@@ -45,9 +45,8 @@ class FireAuth with ChangeNotifier {
 
   Future<void> signIn(BuildContext context, BigData bigData,
       FireStore fireStore, DreamProvider dreamProvider) async {
-    await handleSignIn();
-    bigData.bigData["User"]["Email"] = email;
-    bigData.bigData["User"]["Name"] = displayName;
+    await handleSignIn(bigData);
+
     if ((await fireStore.bajarDataCloud(email, "Datos Personales"))
         .isNotEmpty) {
       await bigData.migData(FireStore(), email);
@@ -90,14 +89,17 @@ class FireAuth with ChangeNotifier {
     return await FirebaseAuth.instance.signInWithCredential(credential);
   }
 
-  Future<void> handleSignIn() async {
+  Future<void> handleSignIn(BigData bigdata) async {
     try {
       currentUser = await googleSignIn.signIn();
       email = currentUser!.email;
       displayName = currentUser!.displayName!;
       print("EMAIL:::-> $email");
+      bigdata.bigData["User"]["Email"] = email;
+      bigdata.bigData["User"]["Name"] = displayName;
       credential = await signInWithGoogle(currentUser);
-      // if (pref.autoAuth == false) pref.autoAuth = true;
+
+      bigdata.save();
     } catch (error) {
       print(error);
     }

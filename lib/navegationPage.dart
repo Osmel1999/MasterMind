@@ -1,6 +1,7 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:master_app/Pages/mediaPage.dart';
+import 'package:master_app/Provider/Firebase/fire_store.dart';
 import 'package:master_app/Provider/homeProvider.dart';
 import 'package:provider/provider.dart';
 
@@ -29,17 +30,21 @@ class _NavigationPageState extends State<NavigationPage> {
   // int navIndex = 0;
 
   @override
+  initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // actualizamos la sesion y los datos del servidor.
+      final bigdata = Provider.of<BigData>(context, listen: false);
+      bigdata.updateSesion(FireStore());
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
     final navProv = Provider.of<NavigationProvider>(context);
     final agendaProvider = Provider.of<AgendaProvider>(context);
     final bigdata = Provider.of<BigData>(context);
-
-    initState() {
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
-        (DateTime.parse(bigdata.bigData["Sesion"]));
-      });
-    }
 
     return Scaffold(
       body: Padding(

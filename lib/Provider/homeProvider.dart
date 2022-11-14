@@ -49,8 +49,8 @@ class AgendaProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void addEvent(BuildContext context, Size media, BigData bigdata) {
-    TextEditingController eNoteController = TextEditingController();
+  void addEvent(BuildContext context, Size media, BigData bigdata,
+      {String? concepto}) {
     showCupertinoModalPopup(
         context: context,
         builder: (BuildContext builder) {
@@ -69,18 +69,33 @@ class AgendaProvider with ChangeNotifier {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text("Agendar evento",
+                          Text(
+                              (concepto != null)
+                                  ? "Agendar $concepto"
+                                  : "Agendar evento",
                               textAlign: TextAlign.left,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Colors.black,
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
                               )),
                           TextButton(
                               onPressed: () {
-                                Navigator.pop(context);
-                                addConcept(context: context, lista: []);
-                                // Navigator.pop(context);
+                                if (concepto != null) {
+                                  addDB(eventDateTime!, concepto,
+                                      bigdata: bigdata);
+                                  // dbAgenda;
+                                  notificationService.scheduleNotification(
+                                      'Agenda', concepto, eventDateTime!, 1);
+                                  print(bigdata.bigData["Agenda"]);
+                                  Navigator.of(context).pop();
+                                } else {
+                                  Navigator.pop(context);
+                                  addConcept(
+                                      context: context,
+                                      lista: [],
+                                      bigData: bigdata);
+                                }
                               },
                               child: const Text(
                                 "Listo",
@@ -109,7 +124,10 @@ class AgendaProvider with ChangeNotifier {
         });
   }
 
-  addConcept({required BuildContext context, required List<Widget> lista}) {
+  addConcept(
+      {required BuildContext context,
+      required List<Widget> lista,
+      required BigData bigData}) {
     var media = MediaQuery.of(context).size;
     final dataModel = DataModel();
     String concept = dataModel.agendaConcept[0];
@@ -131,7 +149,7 @@ class AgendaProvider with ChangeNotifier {
                   child: TextButton(
                     child: const Text("Listo"),
                     onPressed: () {
-                      addDB(eventDateTime!, concept);
+                      addDB(eventDateTime!, concept, bigdata: bigData);
                       dbAgenda;
                       Navigator.of(context).pop();
                       notificationService.scheduleNotification(
@@ -155,15 +173,23 @@ class AgendaProvider with ChangeNotifier {
         });
   }
 
-  addDB(DateTime date, String query) {
+  String minToString(DateTime time) {
+    String tiempo = "";
+    tiempo = (time.minute < 10) ? "0${time.minute}" : "${time.minute}";
+    return tiempo;
+  }
+
+  addDB(DateTime date, String query, {required BigData bigdata}) {
     // agregamos la nueva data en (String)
     Map temp = {
       ...dbAgenda["${date.year}-${date.month}-${date.day}"] ?? {},
-      "${date.hour}${date.minute}": {
-        "dateTime": "AM",
+      ("${date.hour}${minToString(date)}"): {
+        "meridiano": "AM",
         "hora": "${date.hour}",
-        "min": "${date.minute}",
+        "min": minToString(date),
         "concepto": query,
+        "fecha": date.toString(),
+        "checked": false,
       }
     };
     // Convetimos los keys de la data del dia a (int)
@@ -182,9 +208,9 @@ class AgendaProvider with ChangeNotifier {
       };
     }
     agenda = dbAgenda[dataDay] ?? {};
+    bigdata.update({...bigdata.bigData, "Agenda": dbAgenda});
+    bigdata.save();
     notifyListeners();
-    pref.bigData =
-        json.encode({...json.decode(pref.bigData), "Agenda": dbAgenda});
   }
 
   void addCompromiso(BuildContext context, Size media, BigData bigdata) {
@@ -216,10 +242,8 @@ class AgendaProvider with ChangeNotifier {
                               )),
                           TextButton(
                               onPressed: () {
-                                addDB(
-                                  eventDateTime!,
-                                  eNoteController.text,
-                                );
+                                addDB(eventDateTime!, eNoteController.text,
+                                    bigdata: bigdata);
 
                                 Navigator.of(context).pop();
                                 notificationService.scheduleNotification(
