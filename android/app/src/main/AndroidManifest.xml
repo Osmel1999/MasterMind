@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.master_app">
+    package="com.teserakt.Master_mind">
     
     <uses-permission android:name="android.permission.READ_CONTACTS"/>
     <uses-permission android:name="android.permission.WRITE_CONTACTS"/>
@@ -9,9 +9,9 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
    <application
-        android:label="master_app"
+        android:label="Master Mind"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"
             android:exported="true"

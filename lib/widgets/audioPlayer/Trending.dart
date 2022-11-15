@@ -22,7 +22,7 @@ class _TrendingState extends State<Trending> {
       height: media.height * 0.21,
       aspectRatio: 8 / 8,
       viewportFraction: 0.6,
-      // item: playerProvider.trending,
+      item: playerProvider.trending,
     );
   }
 }

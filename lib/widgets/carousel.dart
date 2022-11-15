@@ -34,7 +34,7 @@ class _CarouselState extends State<Carousel> {
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
 
-    List<dynamic> item = (widget.item != null) ? widget.item! : drm;
+    List<dynamic> item = (widget.item!.isNotEmpty) ? widget.item! : drm;
     return CarouselSlider.builder(
       itemCount: item.length,
       options: CarouselOptions(

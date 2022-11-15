@@ -122,6 +122,7 @@ class BigData with ChangeNotifier {
   Map<String, dynamic> getProgress() {
     String current =
         weekIndicator(DateTime.parse(bigData["Compromiso"]["init"]));
+    if (bigData["Progreso"][current] == null) bigData["Progreso"][current] = {};
     return bigData["Progreso"][current][today] ?? {};
   }
 

@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 
 import 'Pages/contactPage.dart';
 import 'Pages/homePage.dart';
-import 'Pages/statsPage.dart';
+import 'Pages/BeWellPage.dart';
 import 'Provider/bigData.dart';
 import 'Provider/navProvider.dart';
 import 'package:master_app/local_notification/local_notification.dart';
@@ -23,7 +23,7 @@ class _NavigationPageState extends State<NavigationPage> {
   Map<String, Widget> body = const {
     "Inicio": HomePage(),
     "Contactos": ContactsPage(),
-    "IA": StatsPage(),
+    "Bienestar": BeWellPage(),
     "Multimedia": MediaPage(),
   };
 
@@ -112,7 +112,7 @@ class _NavigationPageState extends State<NavigationPage> {
               Icon(Icons.list_rounded, size: 30, color: Colors.white),
               Icon(Icons.perm_contact_cal_outlined,
                   size: 30, color: Colors.white),
-              Icon(Icons.bubble_chart, size: 30, color: Colors.white),
+              Icon(Icons.healing_rounded, size: 30, color: Colors.white),
               Icon(Icons.school_rounded, size: 30, color: Colors.white),
             ],
             onTap: (index) {

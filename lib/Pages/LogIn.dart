@@ -103,8 +103,7 @@ class SignInDemoState extends State<SignInDemo> {
                 children: [
                   SizedBox(
                       // decoration: BoxDecoration(color: Colors.blue),
-                      child: Image.network(
-                          'http://pngimg.com/uploads/google/google_PNG19635.png',
+                      child: Image.asset('assets/google_icon.png',
                           fit: BoxFit.cover)),
                   const Text('Ingresar'),
                 ],
