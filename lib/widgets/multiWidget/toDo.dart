@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:provider/provider.dart';
+
+import '../../Provider/bigData.dart';
 
 class ToDo extends StatefulWidget {
   const ToDo({super.key});
@@ -9,11 +12,18 @@ class ToDo extends StatefulWidget {
   State<ToDo> createState() => _ToDoState();
 }
 
-Map<String, dynamic> metrics = {
-  "Llamadas": {"Meta": 20, "Hechas": 3},
-  "Presentacion": {"Meta": 2, "Hechas": 0},
-  "Seguimiento": {"Meta": 4, "Hechas": 1},
-  "Planificacion": {"Meta": 1, "Hechas": 0}
+// Map<String, dynamic> metrics = {
+//   "Llamadas": {"Meta": 20, "Hechas": 3},
+//   "Presentacion": {"Meta": 2, "Hechas": 0},
+//   "Seguimiento": {"Meta": 4, "Hechas": 1},
+//   "Planificacion": {"Meta": 1, "Hechas": 0}
+// };
+
+Map<String, dynamic> metas = {
+  "Llamadas": 20,
+  "Presentacion": 2,
+  "Seguimiento": 4,
+  "Planificacion": 1
 };
 
 Map<String, dynamic> iconos = {
@@ -52,13 +62,18 @@ Map<String, dynamic> iconos = {
 };
 
 class _ToDoState extends State<ToDo> {
+  late BigData bigdata;
+
   @override
   Widget build(BuildContext context) {
+    bigdata = Provider.of<BigData>(context);
     var media = MediaQuery.of(context).size;
+    Map<String, dynamic> metricas = bigdata.getProgress();
     return ListView.builder(
-        itemCount: metrics.length,
+        itemCount: metas.length,
         itemBuilder: (context, i) {
-          String key = metrics.keys.elementAt(i);
+          String key = metas.keys.elementAt(i);
+          int hechas = metricas[key] ?? 0;
           return Column(
             children: [
               Container(
@@ -76,7 +91,7 @@ class _ToDoState extends State<ToDo> {
                       leading: iconos[key]["icono"],
                       title: Text(key),
                       trailing: Text(
-                          "${metrics[key]["Hechas"].toString()} / ${metrics[key]["Meta"].toString()}"),
+                          "${hechas.toString()} / ${metas[key].toString()}"),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15.0)),
                     ),
@@ -88,7 +103,7 @@ class _ToDoState extends State<ToDo> {
                         backgroundColor: iconos[key]["colorLineaB"],
                         valueColor: AlwaysStoppedAnimation<Color>(
                             iconos[key]["colorLinea"]),
-                        value: (metrics[key]["Hechas"] / metrics[key]["Meta"]),
+                        value: (hechas / metas[key]),
                         // minHeight: 4,
                       ),
                     )

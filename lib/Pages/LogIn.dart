@@ -21,9 +21,16 @@ class SignInDemoState extends State<SignInDemo> {
   FireStore fireStore = FireStore();
   final pref = PreferenciasUsuario();
   bool autoSignIn = false;
+  late VideoPlayerController _controller;
   @override
   void initState() {
     // TODO: implement initState
+     _controller = VideoPlayerController.network(
+        'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4')
+      ..initialize().then((_) {
+        // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
+        setState(() {});
+      });
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {});
   }
@@ -41,9 +48,9 @@ class SignInDemoState extends State<SignInDemo> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
           SizedBox(
-            height: media.height * 0.1,
-            width: media.width * 0.6,
-            child: Placeholder(),
+            height: media.height * 0.4,
+            // width: media.width * 0.,
+            child: Image.asset(""),
           ),
           const Text('Bienvenido a Master Mind'),
           SizedBox(
@@ -71,10 +78,6 @@ class SignInDemoState extends State<SignInDemo> {
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
     final fireAuth = Provider.of<FireAuth>(context);
-    return Scaffold(
-        body: ConstrainedBox(
-      constraints: const BoxConstraints.expand(),
-      child: _buildBody(media, fireAuth),
-    ));
+    return Material(child: _buildBody(media, fireAuth));
   }
 }

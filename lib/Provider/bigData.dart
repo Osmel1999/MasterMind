@@ -119,6 +119,12 @@ class BigData with ChangeNotifier {
     pref.bigData = json.encode(bigData);
   }
 
+  Map<String, dynamic> getProgress() {
+    String current =
+        weekIndicator(DateTime.parse(bigData["Compromiso"]["init"]));
+    return bigData["Progreso"][current][today] ?? {};
+  }
+
   String addAction(BuildContext context, String action, {BigData? bigdata}) {
     String current =
         weekIndicator(DateTime.parse(bigData["Compromiso"]["init"]));
@@ -131,20 +137,20 @@ class BigData with ChangeNotifier {
   addProgress(
       BuildContext context, String action, String current, BigData? _bigdata) {
     // String current = weekIndicator(DateTime.parse("2022-10-28"));
-    if (bigData["Progreso"][current]["activity"] == null) {
-      bigData["Progreso"][current]["activity"] = {};
+    if (bigData["Progreso"][current][today] == null) {
+      bigData["Progreso"][current][today] = {};
     }
     // Revisamos que accion es la ejecutada
     if (action == "Llamada") {
-      if (bigData["Progreso"][current]["activity"]["Llamada"] == null) {
-        bigData["Progreso"][current]["activity"]["Llamada"] = 0;
+      if (bigData["Progreso"][current][today]["Llamada"] == null) {
+        bigData["Progreso"][current][today]["Llamada"] = 0;
       }
-      bigData["Progreso"][current]["activity"]["Llamada"] =
-          bigData["Progreso"][current]["activity"]["Llamada"] + 1;
+      bigData["Progreso"][current][today]["Llamada"] =
+          bigData["Progreso"][current][today]["Llamada"] + 1;
     } else if (action == "Plan") {
       // PLAN
-      if (bigData["Progreso"][current]["activity"]["Plan"] == null) {
-        bigData["Progreso"][current]["activity"]["Plan"] = 0;
+      if (bigData["Progreso"][current][today]["Plan"] == null) {
+        bigData["Progreso"][current][today]["Plan"] = 0;
       }
       // Abrimos el popUp.
       List<dynamic> temp = bigData["Contactos"]["Invitado"].keys.toList();
@@ -158,15 +164,15 @@ class BigData with ChangeNotifier {
         bigdata: _bigdata!,
       );
 
-      bigData["Progreso"][current]["activity"]["Plan"] =
-          bigData["Progreso"][current]["activity"]["Plan"] + 1;
+      bigData["Progreso"][current][today]["Plan"] =
+          bigData["Progreso"][current][today]["Plan"] + 1;
     } else if (action == "Seguimiento") {
       // FOLLOW
-      if (bigData["Progreso"][current]["activity"]["Seguimiento"] == null) {
-        bigData["Progreso"][current]["activity"]["Seguimiento"] = 0;
+      if (bigData["Progreso"][current][today]["Seguimiento"] == null) {
+        bigData["Progreso"][current][today]["Seguimiento"] = 0;
       }
       // Abrimos el popUp.
-      List<String> temp = bigData["Contactos"]["Plan"].keys.toList();
+      List<dynamic> temp = bigData["Contactos"]["Plan"].keys.toList();
       questTo(
         context,
         action,
@@ -177,12 +183,12 @@ class BigData with ChangeNotifier {
         bigdata: _bigdata!,
       );
 
-      bigData["Progreso"][current]["activity"]["Seguimiento"] =
-          bigData["Progreso"][current]["activity"]["Seguimiento"] + 1;
+      bigData["Progreso"][current][today]["Seguimiento"] =
+          bigData["Progreso"][current][today]["Seguimiento"] + 1;
     } else if (action == "Planificacion") {
       // PLANIFICACION
-      if (bigData["Progreso"][current]["activity"]["Planificacion"] == null) {
-        bigData["Progreso"][current]["activity"]["Planificacion"] = 0;
+      if (bigData["Progreso"][current][today]["Planificacion"] == null) {
+        bigData["Progreso"][current][today]["Planificacion"] = 0;
       }
       // TODO: Crear un sistema especial para esta seccion
       //  // Abrimos el popUp.
@@ -193,8 +199,8 @@ class BigData with ChangeNotifier {
       //     lastList: "Seguimiento",
       //     agendando: "Llamada");
 
-      bigData["Progreso"][current]["activity"]["Planificacion"] =
-          bigData["Progreso"][current]["activity"]["Planificacion"] + 1;
+      bigData["Progreso"][current][today]["Planificacion"] =
+          bigData["Progreso"][current][today]["Planificacion"] + 1;
     }
   }
 
@@ -245,14 +251,25 @@ class BigData with ChangeNotifier {
     return "${init.year}${init.month}${init.day}";
   }
 
-  updateSesion(FireStore fireStore) {
+  newSesion(FireStore fireStore) {
     DateTime now = DateTime.now();
     if (bigData["Sesion"].isEmpty ||
         DateTime.parse(bigData["Sesion"])
             .isBefore(DateTime.parse("${now.year}-${now.month}-${now.day}"))) {
       bigData["Sesion"] = "${now.year}-${now.month}-${now.day}";
-      fireStore.updateDataCloud("UsersData", bigData["User"]["Email"], bigData);
-      pref.bigData = json.encode(bigData);
+      updateSesion(fireStore);
+      sendMentor(fireStore);
+    }
+  }
+
+  updateSesion(FireStore fireStore) async {
+    fireStore.updateDataCloud("UsersData", bigData["User"]["Email"], bigData);
+    Map<String, dynamic> temp = await fireStore.bajarDataCloud(
+        fireStore.endpoint, bigData["User"]["Email"]);
+    if (temp.isNotEmpty) {
+      bigData = temp;
+      save();
+      notifyListeners();
     }
   }
 
@@ -260,11 +277,27 @@ class BigData with ChangeNotifier {
     bool ok = (query.contains("@") && query.contains(".com"));
     if (query.isNotEmpty && ok) {
       bigData["User"]["Mentor"] = query;
+
       notifyListeners();
     } else if (!ok) {
       bigData["User"].remove("Mentor");
       notifyListeners();
     }
+  }
+
+  sendMentor(FireStore fire) {
+    fire.updateDataMentor(bigData["User"]["Mentor"], {
+      "Equipo": {
+        bigData["User"]["Email"]: {
+          "Progreso": bigData["Progreso"],
+          "Equipo": bigData["Equipo"],
+          "Agenda": bigData["Agenda"],
+          "Sueños": bigData["Sueños"],
+          "Metas": bigData["Metas"],
+          "Compromiso": bigData["Compromiso"],
+        }
+      }
+    });
   }
 
   checkContacts(Map contacts) {

@@ -4,7 +4,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 
 class Carousel extends StatefulWidget {
-  List<String>? item;
+  List<dynamic>? item;
   double height;
   double aspectRatio;
   double viewportFraction;
@@ -34,7 +34,7 @@ class _CarouselState extends State<Carousel> {
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
 
-    List<String> item = (widget.item != null) ? widget.item! : drm;
+    List<dynamic> item = (widget.item != null) ? widget.item! : drm;
     return CarouselSlider.builder(
       itemCount: item.length,
       options: CarouselOptions(

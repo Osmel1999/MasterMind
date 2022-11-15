@@ -117,15 +117,7 @@ class _MentorSelectorState extends State<MentorSelector> {
     bigdata.save();
     fire.updateDataCloud(
         fire.endpoint, bigdata.bigData["User"]["Email"], bigdata.bigData);
-    fire.updateDataMentor(bigdata.bigData["User"]["Mentor"], {
-      bigdata.bigData["User"]["Email"]: {
-        "Progreso": bigdata.bigData["Progreso"],
-        "Equipo": bigdata.bigData["Equipo"],
-        "Agenda": bigdata.bigData["Agenda"],
-        "Sueños": bigdata.bigData["Sueños"],
-        "Metas": bigdata.bigData["Metas"],
-      }
-    });
+    bigdata.sendMentor(fire);
     navProv.indexNav = 1;
     Navigator.pushReplacement(
       context,

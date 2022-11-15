@@ -1,6 +1,12 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:master_app/Provider/Firebase/fire_store.dart';
+import 'package:provider/provider.dart';
+
+import '../../Pages/PartnerViewer/PartnerPage.dart';
+import '../../Provider/bigData.dart';
 
 class Teams extends StatefulWidget {
   const Teams({super.key});
@@ -17,6 +23,9 @@ class _TeamsState extends State<Teams> {
   @override
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
+    final bigdata = Provider.of<BigData>(context);
+    final fire = FireStore();
+
     return ListView.builder(
         itemCount: partners.length,
         itemBuilder: (context, i) {
@@ -49,6 +58,27 @@ class _TeamsState extends State<Teams> {
                       ),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15.0)),
+                      onTap: () async {
+                        showCupertinoDialog(
+                            context: context,
+                            builder: (context) {
+                              return const Center(
+                                  child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                              ));
+                            });
+                        Map<String, dynamic> _temp =
+                            await fire.bajarDataCloud(fire.endpoint, key);
+                        // ignore: use_build_context_synchronously
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (BuildContext context) => PartnerPage(
+                              data: _temp,
+                            ),
+                          ),
+                        );
+                      },
                     ),
                     ClipRRect(
                       borderRadius: const BorderRadius.only(

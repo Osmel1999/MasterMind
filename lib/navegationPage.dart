@@ -32,11 +32,6 @@ class _NavigationPageState extends State<NavigationPage> {
   @override
   initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      // actualizamos la sesion y los datos del servidor.
-      final bigdata = Provider.of<BigData>(context, listen: false);
-      bigdata.updateSesion(FireStore());
-    });
   }
 
   @override
