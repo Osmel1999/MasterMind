@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:master_app/Pages/SignIn/DreamPage.dart';
 import 'package:master_app/Preferencias/sharedPeference.dart';
 import 'package:master_app/Provider/Firebase/fire_store.dart';
 import 'package:provider/provider.dart';
+import 'package:video_player/video_player.dart';
 
 import '../Provider/Firebase/fire_auth.dart';
 import '../Provider/bigData.dart';
@@ -25,14 +27,22 @@ class SignInDemoState extends State<SignInDemo> {
   @override
   void initState() {
     // TODO: implement initState
-     _controller = VideoPlayerController.network(
-        'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4')
+    _controller = VideoPlayerController.asset('assets/gif/MasterMind.mp4')
       ..initialize().then((_) {
         // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
+        _controller.play();
+        _controller.setLooping(true);
+
         setState(() {});
       });
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {});
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
   }
 
   Widget _buildBody(Size media, FireAuth fireAuth) {
@@ -45,26 +55,58 @@ class SignInDemoState extends State<SignInDemo> {
       return const NavigationPage();
     } else {
       return Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: <Widget>[
+        children: [
           SizedBox(
-            height: media.height * 0.4,
-            // width: media.width * 0.,
-            child: Image.asset(""),
+              height: media.height * 0.5,
+              // width: media.width * 0.,
+              child: _video()),
+          SizedBox(
+            height: media.height * 0.3,
+            child: Column(
+              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(top: media.height * 0.05),
+                  child: const Text(
+                    'Bienvenido a Master Mind',
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: media.height * 0),
+                  child: const Text(
+                    'Muchas mentes, un propósito',
+                    style: TextStyle(
+                      fontSize: 16,
+                      // fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-          const Text('Bienvenido a Master Mind'),
           SizedBox(
-            height: media.height * 0.03,
-            width: media.width * 0.8,
+            height: media.height * 0.05,
+            width: media.width * 0.6,
             child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue[800],
+              ),
               onPressed: () async {
                 fireAuth.signIn(context, bigData, fireStore, dreamProvider);
               },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
-                  Icon(Icons.apple),
-                  Text('Ingresar'),
+                children: [
+                  SizedBox(
+                      // decoration: BoxDecoration(color: Colors.blue),
+                      child: Image.network(
+                          'http://pngimg.com/uploads/google/google_PNG19635.png',
+                          fit: BoxFit.cover)),
+                  const Text('Ingresar'),
                 ],
               ),
             ),
@@ -74,10 +116,30 @@ class SignInDemoState extends State<SignInDemo> {
     }
   }
 
+  Widget _video() {
+    return _controller.value.isInitialized
+        ? AspectRatio(
+            aspectRatio: _controller.value.aspectRatio,
+            child: GestureDetector(
+              child: VideoPlayer(_controller),
+              onTap: () {
+                // setState(() {
+                //   _controller.value.isPlaying
+                //       ? _controller.pause()
+                //       : _controller.play();
+                // });
+              },
+            ),
+          )
+        : Container();
+  }
+
   @override
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
     final fireAuth = Provider.of<FireAuth>(context);
-    return Material(child: _buildBody(media, fireAuth));
+    return Material(
+        child:
+            Container(color: Colors.white, child: _buildBody(media, fireAuth)));
   }
 }
