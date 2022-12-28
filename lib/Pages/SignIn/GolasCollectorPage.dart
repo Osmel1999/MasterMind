@@ -44,7 +44,8 @@ class _MetasPageState extends State<MetasPage> {
     var media = MediaQuery.of(context).size;
     return Scaffold(
       body: Center(
-        child: Stack(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
               padding: const EdgeInsets.only(top: 5.0),

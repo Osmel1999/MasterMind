@@ -34,7 +34,9 @@ class BigData with ChangeNotifier {
             ? json.decode(pref.bigData)
             : {
                 "Sesion": "",
-                "Agenda": {"2022-10-28": {}},
+                "Agenda": {
+                  // "2022-10-28": {},
+                },
                 "Sueños": {},
                 "Contactos": {
                   "Prospectos": {},
@@ -44,7 +46,7 @@ class BigData with ChangeNotifier {
                   "Plan": {}
                 },
                 "Compromiso": {
-                  "init": "2022-10-28",
+                  // "init": "2022-10-28",
                 },
                 "User": {"Email": ""},
                 "Membresia": {},
@@ -56,8 +58,34 @@ class BigData with ChangeNotifier {
     pref.bigData = jsonEncode(bigData);
   }
 
+  delete() {
+    bigData = {
+      "Sesion": "",
+      "Agenda": {
+        // "2022-10-28": {},
+      },
+      "Sueños": {},
+      "Contactos": {
+        "Prospectos": {},
+        "En espera": {},
+        "Clientes": {},
+        "Invitado": {},
+        "Plan": {}
+      },
+      "Compromiso": {
+        // "init": "2022-10-28",
+      },
+      "User": {"Email": ""},
+      "Membresia": {},
+      "Equipo": {},
+      "Metas": {},
+      "Progreso": {},
+    };
+  }
+
   update(Map<String, dynamic> data) {
     bigData = data;
+    save();
     notifyListeners();
   }
 
@@ -123,7 +151,7 @@ class BigData with ChangeNotifier {
     String current =
         weekIndicator(DateTime.parse(bigData["Compromiso"]["init"]));
     if (bigData["Progreso"][current] == null) bigData["Progreso"][current] = {};
-    return bigData["Progreso"][current][today] ?? {};
+    return bigData["Progreso"][current][today] ?? <String, dynamic>{};
   }
 
   String addAction(BuildContext context, String action, {BigData? bigdata}) {
@@ -252,12 +280,18 @@ class BigData with ChangeNotifier {
     return "${init.year}${init.month}${init.day}";
   }
 
+  String fixDay(String day) {
+    if (day.length < 2) {
+      return "0$day";
+    }
+    return day;
+  }
+
   newSesion(FireStore fireStore) {
     DateTime now = DateTime.now();
     if (bigData["Sesion"].isEmpty ||
-        DateTime.parse(bigData["Sesion"])
-            .isBefore(DateTime.parse("${now.year}-${now.month}-${now.day}"))) {
-      bigData["Sesion"] = "${now.year}-${now.month}-${now.day}";
+        DateTime.parse(bigData["Sesion"]).isBefore(now)) {
+      bigData["Sesion"] = "${now.year}-${now.month}-${fixDay("${now.day}")}";
       updateSesion(fireStore);
       sendMentor(fireStore);
     }
@@ -272,6 +306,22 @@ class BigData with ChangeNotifier {
       save();
       notifyListeners();
     }
+  }
+
+  Future<Map<String, dynamic>> logIn(FireStore fireStore) async {
+    Map<String, dynamic>? _temp =
+        await fireStore.bajarDataCloud("UsersData", bigData["User"]["Email"]);
+    if (_temp.isNotEmpty) bigData = _temp;
+    save();
+    notifyListeners();
+    return bigData;
+  }
+
+  removeMembership() {
+    bigData["Membresia"] = null;
+    FireStore().updateDataCloud("UsersData", bigData["User"]["Email"], bigData);
+    save();
+    notifyListeners();
   }
 
   changeMentor(String query) {

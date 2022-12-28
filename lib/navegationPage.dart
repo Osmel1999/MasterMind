@@ -1,10 +1,13 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:master_app/Pages/mediaPage.dart';
 import 'package:master_app/Provider/Firebase/fire_store.dart';
 import 'package:master_app/Provider/homeProvider.dart';
 import 'package:provider/provider.dart';
 
+import 'Pages/LogIn.dart';
+import 'Pages/Purchase/MarketPage.dart';
 import 'Pages/contactPage.dart';
 import 'Pages/homePage.dart';
 import 'Pages/BeWellPage.dart';
@@ -20,6 +23,7 @@ class NavigationPage extends StatefulWidget {
 }
 
 class _NavigationPageState extends State<NavigationPage> {
+  late BigData bigdata;
   Map<String, Widget> body = const {
     "Inicio": HomePage(),
     "Contactos": ContactsPage(),
@@ -32,6 +36,28 @@ class _NavigationPageState extends State<NavigationPage> {
   @override
   initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // Revisamos que halla comprado
+      if (bigdata.bigData["Membresia"].isNotEmpty) {
+        if (DateTime.now()
+            .isAfter(DateTime.parse(bigdata.bigData["Membresia"]["fecha"]))) {
+          bigdata.removeMembership();
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute<void>(
+              builder: (BuildContext context) => const MarketScreen(),
+            ),
+          );
+        }
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute<void>(
+            builder: (BuildContext context) => const MarketScreen(),
+          ),
+        );
+      }
+    });
   }
 
   @override
@@ -39,7 +65,7 @@ class _NavigationPageState extends State<NavigationPage> {
     var media = MediaQuery.of(context).size;
     final navProv = Provider.of<NavigationProvider>(context);
     final agendaProvider = Provider.of<AgendaProvider>(context);
-    final bigdata = Provider.of<BigData>(context);
+    bigdata = Provider.of<BigData>(context);
 
     return Scaffold(
       body: Padding(
@@ -85,7 +111,37 @@ class _NavigationPageState extends State<NavigationPage> {
                   ),
                   Container(
                     alignment: Alignment.centerRight,
-                    child: const Icon(Icons.person),
+                    child: GestureDetector(
+                      child: const Icon(Icons.person),
+                      onTap: () {
+                        showCupertinoDialog(
+                            context: context,
+                            builder: (context) {
+                              return CupertinoAlertDialog(
+                                content: const Text(
+                                    "Seguro que desea cerrar sesion?"),
+                                actions: [
+                                  TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: const Text("Cancelar")),
+                                  TextButton(
+                                      onPressed: () {
+                                        bigdata.pref.eliminarPref("bigData");
+                                        bigdata.delete();
+                                        Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute<void>(
+                                            builder: (BuildContext context) =>
+                                                const SignIn(),
+                                          ),
+                                        );
+                                      },
+                                      child: const Text("Aceptar")),
+                                ],
+                              );
+                            });
+                      },
+                    ),
                   ),
                 ],
               ),

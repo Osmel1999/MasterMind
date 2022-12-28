@@ -11,9 +11,10 @@
 // import 'package:in_app_purchase_android/in_app_purchase_android.dart';
 // import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
 // import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
 
+// import '../../navegationPage.dart';
 // import 'consumable_store.dart';
-
 
 // // Auto-consume must be true on iOS.
 // // To try without auto-consume on another platform, change `true` to `false` here.
@@ -30,12 +31,12 @@
 //   _kGoldSubscriptionId,
 // ];
 
-// class _MyApp extends StatefulWidget {
+// class Purchase extends StatefulWidget {
 //   @override
-//   State<_MyApp> createState() => _MyAppState();
+//   State<Purchase> createState() => Purchase_State();
 // }
 
-// class _MyAppState extends State<_MyApp> {
+// class Purchase_State extends State<Purchase> {
 //   final InAppPurchase _inAppPurchase = InAppPurchase.instance;
 //   late StreamSubscription<List<PurchaseDetails>> _subscription;
 //   List<String> _notFoundIds = <String>[];
@@ -138,20 +139,186 @@
 //     super.dispose();
 //   }
 
+//   Widget _body(BuildContext context) {
+//     var media = MediaQuery.of(context).size;
+//     return Stack(children: [
+//       SizedBox(
+//         width: media.width,
+//         child: Image.asset('assets/imagenes/fondo_compra_app.png', scale: 1.5),
+//       ),
+//       SafeArea(
+//         child: Center(
+//           child: Column(
+//             children: [
+//               Container(
+//                 margin:
+//                     EdgeInsets.symmetric(vertical: media.height * 1.5625 / 100),
+//                 child: Text('Master Mind',
+//                     style: TextStyle(
+//                         fontSize: 35.0,
+//                         fontWeight: FontWeight.bold,
+//                         color: Colors.blueGrey[50]),
+//                     textAlign: TextAlign.center),
+//               ),
+//               Container(
+//                 margin:
+//                     EdgeInsets.symmetric(vertical: media.height * 1.5625 / 100),
+//                 child: Text(
+//                     'Esperamos hayas disfrlutado la experiencia de planificar tu negocio, te invitamos a contar con tu propio asistente virtualn \n quien te ayudara a manejar tu tiempo efectivamente.\n te conectara con la mejor fuente de conocimient SEN University \n te ayudara a establecer metas jutno a tu equipo para su mutuo crecimiento en el mundo de la virtualidad.',
+//                     style: TextStyle(color: Colors.blueGrey[50]),
+//                     textAlign: TextAlign.center),
+//               ),
+//               Container(
+//                 // margin: EdgeInsets.only(top: media.height * 1.5625 / 100),
+//                 height: media.height / 2,
+//                 width: media.width,
+//                 child: Row(
+//                   mainAxisAlignment: MainAxisAlignment.center,
+//                   crossAxisAlignment: CrossAxisAlignment.center,
+//                   children: [
+//                     for (var prod in _products)
+//                       Expanded(
+//                         child: Container(
+//                           height: media.height * 30 / 100,
+//                           width: media.width / 2 - (media.width * 3.125 / 100),
+//                           margin: EdgeInsets.symmetric(
+//                               horizontal: media.height * 0.78125 / 100),
+//                           alignment: Alignment.center,
+//                           decoration: BoxDecoration(
+//                               color: Colors.blueGrey[100],
+//                               borderRadius: BorderRadius.circular(10.0)),
+//                           child: Column(
+//                             children: [
+//                               // ignore: deprecated_member_use
+//                               Expanded(
+//                                 flex: 1,
+//                                 child: Container(
+//                                   child: Row(
+//                                     crossAxisAlignment:
+//                                         CrossAxisAlignment.center,
+//                                     children: [
+//                                       Text(
+//                                         (prod.title.contains('semestral'))
+//                                             ? '6'
+//                                             : '1',
+//                                         style: TextStyle(fontSize: 35.0),
+//                                         textAlign: TextAlign.center,
+//                                       ),
+//                                       Text(
+//                                         (prod.title.contains('semestral'))
+//                                             ? 'meses'
+//                                             : 'año',
+//                                         style: TextStyle(fontSize: 22.0),
+//                                         textAlign: TextAlign.center,
+//                                       ),
+//                                     ],
+//                                   ),
+//                                 ),
+//                               ),
+//                               Expanded(
+//                                   flex: 1,
+//                                   child: Text(
+//                                     (prod.description.contains('Promo'))
+//                                         ? 'Promo lanzamiento 23% de descuento'
+//                                         : 'Subscripcion Master Mind',
+//                                     textAlign: TextAlign.center,
+//                                   )),
+//                               Expanded(
+//                                 flex: 0,
+//                                 child: Text(prod.price,
+//                                     style: TextStyle(
+//                                         color: Colors.green[800],
+//                                         fontSize: 15)),
+//                               ),
+//                               Expanded(
+//                                   flex: 0,
+//                                   child: GestureDetector(
+//                                     child: Container(
+//                                       alignment: Alignment.center,
+//                                       decoration: BoxDecoration(
+//                                           color: Colors.green[800],
+//                                           borderRadius: BorderRadius.only(
+//                                               bottomLeft: Radius.circular(10.0),
+//                                               bottomRight:
+//                                                   Radius.circular(10.0))),
+//                                       width: double.maxFinite,
+//                                       height: media.height * 5 / 100,
+//                                       child: Text(
+//                                         '¡Comprar!',
+//                                         style: TextStyle(
+//                                             color: Colors.blueGrey[50],
+//                                             fontWeight: FontWeight.bold),
+//                                         textAlign: TextAlign.center,
+//                                       ),
+//                                     ),
+//                                     // onTap: () => _buyProduct(prod),
+//                                   )
+//                                   // FlatButton(
+//                                   //   child: Text('¡Comprar!'),
+//                                   //   color: Colors.green[800],
+//                                   //   onPressed: () => _buyProduct(prod),
+//                                   // ),
+//                                   ),
+//                             ],
+//                           ),
+//                         ),
+//                       ),
+
+//                     // SizedBox(height: media.height / 9),
+//                     // ]
+//                   ],
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ),
+//       Positioned(
+//         top: 30.0,
+//         // left: 0.0,
+//         child: SizedBox(
+//           child: TextButton(
+//               child: const Icon(
+//                 Icons.arrow_back_ios_rounded,
+//                 color: Colors.white,
+//               ),
+//               onPressed: () async {
+//                 // limpiamos la preferencias por si antes tuvo una sesion abierta con otro usuario.
+//                 SharedPreferences preferences =
+//                     await SharedPreferences.getInstance();
+//                 await preferences.clear();
+//                 // debemos borrar las notificaciones tambien.
+//                 // bloC.localNotification.deleteAllNotification();
+//                 // ignore: use_build_context_synchronously
+//                 Navigator.pushReplacement(
+//                     context,
+//                     MaterialPageRoute(
+//                         builder: (BuildContext context) => NavigationPage()));
+//               }),
+//         ),
+//       )
+//     ]);
+//   }
+
+//   // _buyProduct() {
+//   //   purchaseParam = PurchaseParam(
+//   //     productDetails: productDetails,
+//   //   );
+//   //   _inAppPurchase.buyConsumable(
+//   //       purchaseParam: purchaseParam, autoConsume: false);
+//   // }
+
 //   @override
 //   Widget build(BuildContext context) {
 //     final List<Widget> stack = <Widget>[];
 //     if (_queryProductError == null) {
 //       stack.add(
-//         ListView(
-//           children: <Widget>[
-//             _buildConnectionCheckTile(),
-//             _buildProductList(),
-//             _buildConsumableBox(),
-//             _buildRestoreButton(),
-//           ],
-//         ),
-//       );
+//           // ListView(
+//           //   children: <Widget>[
+//           //     _buildProductList(),
+//           //   ],
+//           // ),
+//           _body(context));
 //     } else {
 //       stack.add(Center(
 //         child: Text(_queryProductError!),
@@ -175,42 +342,14 @@
 
 //     return MaterialApp(
 //       home: Scaffold(
-//         appBar: AppBar(
-//           title: const Text('IAP Example'),
-//         ),
+//         // appBar: AppBar(
+//         //   title: const Text('IAP Example'),
+//         // ),
 //         body: Stack(
 //           children: stack,
 //         ),
 //       ),
 //     );
-//   }
-
-//   Card _buildConnectionCheckTile() {
-//     if (_loading) {
-//       return const Card(child: ListTile(title: Text('Trying to connect...')));
-//     }
-//     final Widget storeHeader = ListTile(
-//       leading: Icon(_isAvailable ? Icons.check : Icons.block,
-//           color: _isAvailable
-//               ? Colors.green
-//               : ThemeData.light().colorScheme.error),
-//       title:
-//           Text('The store is ${_isAvailable ? 'available' : 'unavailable'}.'),
-//     );
-//     final List<Widget> children = <Widget>[storeHeader];
-
-//     if (!_isAvailable) {
-//       children.addAll(<Widget>[
-//         const Divider(),
-//         ListTile(
-//           title: Text('Not connected',
-//               style: TextStyle(color: ThemeData.light().colorScheme.error)),
-//           subtitle: const Text(
-//               'Unable to connect to the payments processor. Has this app been configured correctly? See the example README for instructions.'),
-//         ),
-//       ]);
-//     }
-//     return Card(child: Column(children: children));
 //   }
 
 //   Card _buildProductList() {
@@ -229,8 +368,7 @@
 //       productList.add(ListTile(
 //           title: Text('[${_notFoundIds.join(", ")}] not found',
 //               style: TextStyle(color: ThemeData.light().colorScheme.error)),
-//           subtitle: const Text(
-//               'This app needs special configuration to run. Please see example/README.md for instructions.')));
+//           subtitle: const Text('The products are not available yet')));
 //     }
 
 //     // This loading previous purchases code is just a demo. Please do not use this as it is.
@@ -254,54 +392,48 @@
 //           subtitle: Text(
 //             productDetails.description,
 //           ),
-//           trailing: previousPurchase != null
-//               ? IconButton(
-//                   onPressed: () => confirmPriceChange(context),
-//                   icon: const Icon(Icons.upgrade))
-//               : TextButton(
-//                   style: TextButton.styleFrom(
-//                     backgroundColor: Colors.green[800],
-//                     // TODO(darrenaustin): Migrate to new API once it lands in stable: https://github.com/flutter/flutter/issues/105724
-//                     // ignore: deprecated_member_use
-//                     primary: Colors.white,
-//                   ),
-//                   onPressed: () {
-//                     late PurchaseParam purchaseParam;
+//           trailing: TextButton(
+//             style: TextButton.styleFrom(
+//               backgroundColor: Colors.green[800],
+//               // TODO(darrenaustin): Migrate to new API once it lands in stable: https://github.com/flutter/flutter/issues/105724
+//               // ignore: deprecated_member_use
+//               primary: Colors.white,
+//             ),
+//             child: Text(productDetails.price),
+//             onPressed: () {
+//               late PurchaseParam purchaseParam;
 
-//                     if (Platform.isAndroid) {
-//                       // NOTE: If you are making a subscription purchase/upgrade/downgrade, we recommend you to
-//                       // verify the latest status of you your subscription by using server side receipt validation
-//                       // and update the UI accordingly. The subscription purchase status shown
-//                       // inside the app may not be accurate.
-//                       final GooglePlayPurchaseDetails? oldSubscription =
-//                           _getOldSubscription(productDetails, purchases);
+//               if (Platform.isAndroid) {
+//                 // NOTE: If you are making a subscription purchase/upgrade/downgrade, we recommend you to
+//                 // verify the latest status of you your subscription by using server side receipt validation
+//                 // and update the UI accordingly. The subscription purchase status shown
+//                 // inside the app may not be accurate.
+//                 final GooglePlayPurchaseDetails? oldSubscription =
+//                     _getOldSubscription(productDetails, purchases);
 
-//                       purchaseParam = GooglePlayPurchaseParam(
-//                           productDetails: productDetails,
-//                           changeSubscriptionParam: (oldSubscription != null)
-//                               ? ChangeSubscriptionParam(
-//                                   oldPurchaseDetails: oldSubscription,
-//                                   prorationMode:
-//                                       ProrationMode.immediateWithTimeProration,
-//                                 )
-//                               : null);
-//                     } else {
-//                       purchaseParam = PurchaseParam(
-//                         productDetails: productDetails,
-//                       );
-//                     }
+//                 purchaseParam = GooglePlayPurchaseParam(
+//                     productDetails: productDetails,
+//                     changeSubscriptionParam: (oldSubscription != null)
+//                         ? ChangeSubscriptionParam(
+//                             oldPurchaseDetails: oldSubscription,
+//                             prorationMode:
+//                                 ProrationMode.immediateWithTimeProration,
+//                           )
+//                         : null);
+//               } else {
+//                 purchaseParam = PurchaseParam(
+//                   productDetails: productDetails,
+//                 );
+//               }
 
-//                     if (productDetails.id == _kConsumableId) {
-//                       _inAppPurchase.buyConsumable(
-//                           purchaseParam: purchaseParam,
-//                           autoConsume: _kAutoConsume);
-//                     } else {
-//                       _inAppPurchase.buyNonConsumable(
-//                           purchaseParam: purchaseParam);
-//                     }
-//                   },
-//                   child: Text(productDetails.price),
-//                 ),
+//               if (productDetails.id == _kConsumableId) {
+//                 _inAppPurchase.buyConsumable(
+//                     purchaseParam: purchaseParam, autoConsume: false);
+//               } else {
+//                 _inAppPurchase.buyNonConsumable(purchaseParam: purchaseParam);
+//               }
+//             },
+//           ),
 //         );
 //       },
 //     ));
@@ -454,35 +586,35 @@
 //     }
 //   }
 
-//   Future<void> confirmPriceChange(BuildContext context) async {
-//     if (Platform.isAndroid) {
-//       final InAppPurchaseAndroidPlatformAddition androidAddition =
-//           _inAppPurchase
-//               .getPlatformAddition<InAppPurchaseAndroidPlatformAddition>();
-//       final BillingResultWrapper priceChangeConfirmationResult =
-//           await androidAddition.launchPriceChangeConfirmationFlow(
-//         sku: 'purchaseId',
-//       );
-//       if (priceChangeConfirmationResult.responseCode == BillingResponse.ok) {
-//         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-//           content: Text('Price change accepted'),
-//         ));
-//       } else {
-//         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-//           content: Text(
-//             priceChangeConfirmationResult.debugMessage ??
-//                 'Price change failed with code ${priceChangeConfirmationResult.responseCode}',
-//           ),
-//         ));
-//       }
-//     }
-//     if (Platform.isIOS) {
-//       final InAppPurchaseStoreKitPlatformAddition iapStoreKitPlatformAddition =
-//           _inAppPurchase
-//               .getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
-//       await iapStoreKitPlatformAddition.showPriceConsentIfNeeded();
-//     }
-//   }
+//   // Future<void> confirmPriceChange(BuildContext context) async {
+//   //   if (Platform.isAndroid) {
+//   //     final InAppPurchaseAndroidPlatformAddition androidAddition =
+//   //         _inAppPurchase
+//   //             .getPlatformAddition<InAppPurchaseAndroidPlatformAddition>();
+//   //     final BillingResultWrapper priceChangeConfirmationResult =
+//   //         await androidAddition.launchPriceChangeConfirmationFlow(
+//   //       sku: 'purchaseId',
+//   //     );
+//   //     if (priceChangeConfirmationResult.responseCode == BillingResponse.ok) {
+//   //       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+//   //         content: Text('Price change accepted'),
+//   //       ));
+//   //     } else {
+//   //       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+//   //         content: Text(
+//   //           priceChangeConfirmationResult.debugMessage ??
+//   //               'Price change failed with code ${priceChangeConfirmationResult.responseCode}',
+//   //         ),
+//   //       ));
+//   //     }
+//   //   }
+//   //   if (Platform.isIOS) {
+//   //     final InAppPurchaseStoreKitPlatformAddition iapStoreKitPlatformAddition =
+//   //         _inAppPurchase
+//   //             .getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
+//   //     await iapStoreKitPlatformAddition.showPriceConsentIfNeeded();
+//   //   }
+//   // }
 
 //   GooglePlayPurchaseDetails? _getOldSubscription(
 //       ProductDetails productDetails, Map<String, PurchaseDetails> purchases) {

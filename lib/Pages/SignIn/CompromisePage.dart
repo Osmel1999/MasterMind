@@ -73,7 +73,8 @@ class _CompromisoPageState extends State<CompromisoPage> {
                             // bigData.selectedRango(rangoLista[_selectedRango]);
                             bigdata.bigData["Compromiso"] = {
                               "aceptado": true,
-                              "hora": "10:30"
+                              "hora": "10:30",
+                              "init": bigdata.today,
                             };
 
                             Navigator.pushReplacement(

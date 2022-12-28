@@ -11,6 +11,9 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:timezone/data/latest.dart' as tz;
 
 import 'Pages/LogIn.dart';
+import 'Pages/Purchase/MarketPage.dart';
+// import 'Pages/Purchase/old_purchase.dart';
+// import 'Pages/Purchase/purchase.dart';
 import 'Preferencias/sharedPeference.dart';
 import 'Provider/Firebase/fire_store.dart';
 import 'Provider/bigData.dart';
@@ -66,7 +69,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(backgroundColor: Colors.white
             // primarySwatch: Colors.blueAccent!,
             ),
-        home: const SignInDemo(),
+        home: const SignIn(),
       ),
     );
   }

@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import '../../Provider/bigData.dart';
 import '../../Provider/dreamProvider.dart';
 import '../../widgets/searchDelegate.dart';
+import 'CompromisePage.dart';
 import 'GolasCollectorPage.dart';
 
 class Dreams extends StatefulWidget {
@@ -120,7 +121,8 @@ class _DreamsState extends State<Dreams> {
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                builder: (BuildContext context) => MetasPage(),
+                                builder: (BuildContext context) =>
+                                    const CompromisoPage(),
                               ),
                             );
                           },
